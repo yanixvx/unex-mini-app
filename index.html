@@ -7,41 +7,46 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root {
-  --bg: #ffffff;
-  --bg2: #f5f6f8;
-  --text: #111111;
-  --sub: #6b7280;
-  --accent: #2563eb;
-  --accent2: #1d4ed8;
+  --bg: #f4f7fb;
+  --bg2: #eef2f8;
+  --text: #0f172a;
+  --sub: #64748b;
+  --accent: #0ea5e9;
+  --accent2: #2563eb;
+  --accent-grad: linear-gradient(135deg,#0ea5e9,#2563eb);
   --card: #ffffff;
-  --border: #e5e7eb;
-  --green: #16a34a;
-  --danger: #dc2626;
-  --shadow: 0 1px 3px rgba(0,0,0,.08);
+  --border: #e2e8f0;
+  --green: #10b981;
+  --danger: #ef4444;
+  --shadow: 0 4px 16px rgba(37,99,235,.08);
+  --shadow-hover: 0 8px 24px rgba(37,99,235,.14);
 }
 body.dark {
-  --bg: #0f1115;
-  --bg2: #16181d;
-  --text: #f3f4f6;
-  --sub: #9ca3af;
-  --card: #1a1d24;
-  --border: #2a2e37;
-  --shadow: 0 1px 3px rgba(0,0,0,.4);
+  --bg: #0b1220;
+  --bg2: #111a2e;
+  --text: #e2e8f0;
+  --sub: #94a3b8;
+  --card: #141e33;
+  --border: #1e293b;
+  --shadow: 0 4px 16px rgba(0,0,0,.35);
+  --shadow-hover: 0 8px 24px rgba(0,0,0,.5);
 }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--text); padding-bottom:80px; }
 .hidden { display:none !important; }
 
 /* Header */
-.header { background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; padding:20px 16px 16px; }
-.header h1 { font-size:20px; font-weight:700; }
-.header p { font-size:13px; opacity:.9; margin-top:4px; }
-.header .badge { display:inline-block; background:rgba(255,255,255,.2); padding:3px 10px; border-radius:20px; font-size:11px; margin-top:8px; }
+.header { background:linear-gradient(135deg,#0ea5e9 0%,#2563eb 55%,#1e40af 100%); color:#fff; padding:24px 16px 20px; position:relative; overflow:hidden; }
+.header::after { content:''; position:absolute; right:-40px; top:-40px; width:160px; height:160px; border-radius:50%; background:rgba(255,255,255,.08); }
+.header::before { content:''; position:absolute; right:30px; bottom:-60px; width:120px; height:120px; border-radius:50%; background:rgba(255,255,255,.06); }
+.header h1 { font-size:21px; font-weight:800; position:relative; z-index:1; }
+.header p { font-size:13px; opacity:.92; margin-top:4px; position:relative; z-index:1; }
+.header .badge { display:inline-block; background:rgba(255,255,255,.18); padding:4px 12px; border-radius:20px; font-size:11px; margin-top:10px; font-weight:600; position:relative; z-index:1; backdrop-filter:blur(4px); }
 
 /* Tabs */
-.tabs { display:flex; background:var(--bg2); position:sticky; top:0; z-index:50; border-bottom:1px solid var(--border); overflow-x:auto; }
-.tab { flex:1; min-width:90px; padding:12px 8px; text-align:center; font-size:13px; font-weight:600; color:var(--sub); cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; }
-.tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+.tabs { display:flex; background:var(--bg2); position:sticky; top:0; z-index:50; border-bottom:1px solid var(--border); overflow-x:auto; padding:6px 8px; gap:6px; }
+.tab { flex:1; min-width:88px; padding:9px 8px; text-align:center; font-size:12px; font-weight:700; color:var(--sub); cursor:pointer; border-radius:12px; white-space:nowrap; transition:all .2s; }
+.tab.active { background:var(--accent-grad); color:#fff; box-shadow:0 2px 8px rgba(37,99,235,.3); }
 
 /* Sections */
 .section { padding:16px; display:none; }
@@ -49,22 +54,26 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
 
 /* Catalog cards */
 .grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; box-shadow:var(--shadow); display:flex; flex-direction:column; }
-.card .cat { font-size:10px; text-transform:uppercase; letter-spacing:.5px; color:var(--accent); font-weight:700; }
-.card h3 { font-size:14px; margin:6px 0 4px; line-height:1.3; }
-.card .size { font-size:12px; color:var(--sub); margin-bottom:8px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:0 0 14px; box-shadow:var(--shadow); display:flex; flex-direction:column; overflow:hidden; transition:box-shadow .2s, transform .15s; }
+.card:active { transform:scale(.97); box-shadow:var(--shadow-hover); }
+.card .img-wrap { background:var(--bg2); height:120px; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; }
+.card .img-wrap img { max-width:100%; max-height:100%; object-fit:contain; }
+.card .body { padding:12px 12px 0; }
+.card .cat { font-size:10px; text-transform:uppercase; letter-spacing:.6px; color:var(--accent); font-weight:800; }
+.card h3 { font-size:13px; margin:5px 0 3px; line-height:1.35; }
+.card .size { font-size:11px; color:var(--sub); margin-bottom:8px; }
 .card .price { font-size:17px; font-weight:800; color:var(--text); }
 .card .price small { font-size:11px; color:var(--sub); font-weight:400; }
-.card .old { font-size:12px; color:var(--sub); text-decoration:line-through; }
 .card .row { display:flex; align-items:center; justify-content:space-between; margin-top:10px; }
-.btn-add { background:var(--accent); color:#fff; border:none; border-radius:10px; padding:8px 14px; font-size:13px; font-weight:700; cursor:pointer; }
-.btn-add:active { transform:scale(.96); }
+.btn-add { background:var(--accent-grad); color:#fff; border:none; border-radius:12px; padding:9px 14px; font-size:13px; font-weight:700; cursor:pointer; box-shadow:0 2px 8px rgba(37,99,235,.3); }
+.btn-add:active { transform:scale(.94); }
 .qty { display:flex; align-items:center; gap:8px; }
-.qty button { width:28px; height:28px; border-radius:8px; border:1px solid var(--border); background:var(--bg2); color:var(--text); font-size:16px; font-weight:700; cursor:pointer; }
-.qty span { min-width:24px; text-align:center; font-weight:700; font-size:15px; }
-.tag { display:inline-block; font-size:10px; padding:2px 8px; border-radius:10px; font-weight:700; margin-left:6px; }
-.tag.hit { background:#dcfce7; color:#166534; }
-body.dark .tag.hit { background:#14532d; color:#bbf7d0; }
+.qty button { width:30px; height:30px; border-radius:10px; border:1px solid var(--border); background:var(--bg2); color:var(--text); font-size:16px; font-weight:700; cursor:pointer; }
+.qty button:active { background:var(--accent); color:#fff; }
+.qty span { min-width:24px; text-align:center; font-weight:800; font-size:15px; }
+.tag { display:inline-block; font-size:9px; padding:2px 8px; border-radius:10px; font-weight:800; margin-left:6px; text-transform:uppercase; letter-spacing:.4px; }
+.tag.hit { background:linear-gradient(135deg,#f59e0b,#ef4444); color:#fff; }
+.tag.stock { background:#dcfce7; color:#166534; }
 
 /* Calculator */
 .calc-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:12px; }
@@ -80,7 +89,7 @@ body.dark .tag.hit { background:#14532d; color:#bbf7d0; }
 .cartbar { position:fixed; bottom:0; left:0; right:0; background:var(--card); border-top:1px solid var(--border); padding:10px 16px; display:flex; align-items:center; justify-content:space-between; z-index:100; }
 .cartbar .info { font-size:13px; }
 .cartbar .info b { font-size:16px; }
-.btn-cart { background:var(--accent); color:#fff; border:none; border-radius:12px; padding:12px 20px; font-size:14px; font-weight:700; cursor:pointer; }
+.btn-cart { background:var(--accent-grad); color:#fff; border:none; border-radius:12px; padding:12px 20px; font-size:14px; font-weight:800; cursor:pointer; box-shadow:0 2px 8px rgba(37,99,235,.3); }
 .btn-cart:active { transform:scale(.97); }
 
 /* Contacts */
@@ -101,7 +110,7 @@ body.dark .tag.hit { background:#14532d; color:#bbf7d0; }
 .cart-item .price { font-weight:800; }
 .btn-del { background:none; border:none; color:var(--danger); font-size:12px; cursor:pointer; }
 .total { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; margin:12px 0; display:flex; justify-content:space-between; font-weight:700; font-size:16px; }
-.btn-primary { width:100%; background:var(--accent); color:#fff; border:none; border-radius:12px; padding:14px; font-size:15px; font-weight:700; cursor:pointer; }
+.btn-primary { width:100%; background:var(--accent-grad); color:#fff; border:none; border-radius:14px; padding:14px; font-size:15px; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(37,99,235,.3); }
 .btn-primary:active { transform:scale(.98); }
 .btn-sec { width:100%; background:var(--bg2); color:var(--text); border:1px solid var(--border); border-radius:12px; padding:12px; font-size:14px; font-weight:600; cursor:pointer; margin-top:8px; }
 .form-field { margin-bottom:12px; }
@@ -250,26 +259,26 @@ if (tg) {
   tg.ready();
   tg.expand();
   tg.setHeaderColor('#2563eb');
-  tg.setBackgroundColor(tg.colorScheme === 'dark' ? '#0f1115' : '#ffffff');
+  tg.setBackgroundColor(tg.colorScheme === 'dark' ? '#0b1220' : '#f4f7fb');
   if (tg.colorScheme === 'dark') document.body.classList.add('dark');
   tg.MainButton.hide();
   tg.onEvent('mainButtonClicked', submitOrder);
 }
 
-// ===== DATA (ціни з Prom.ua, серпень 2026) =====
+// ===== DATA (ціни з Prom.ua, серпень 2026; фото з medi-unex.com.ua) =====
 const PRODUCTS = [
-  {id:'n4m', cat:'Нітрил', name:'Нітрилові 4 г блакитні UNEX', size:'Розмір M • 100 шт/уп', price:225, hit:true},
-  {id:'n4l', cat:'Нітрил', name:'Нітрилові 4 г блакитні UNEX', size:'Розмір L • 100 шт/уп', price:190, hit:true},
-  {id:'nc4m', cat:'Нітрил', name:'Нітрилові чорні 4 г UNEX', size:'Розмір M • 100 шт/уп', price:275},
-  {id:'ncxl', cat:'Нітрил', name:'Нітрилові чорні UNEX', size:'Розмір XL • 100 шт/уп', price:192},
-  {id:'natur', cat:'Нітрил', name:'Нітрил натуральний (ХС–ХЛ)', size:'100 шт/пачка', price:245},
-  {id:'lats', cat:'Латекс', name:'Латексні неопудрені UNEX', size:'Розмір S • 100 шт/уп', price:115},
-  {id:'latmp', cat:'Латекс', name:'Латексні з мікропудрою UNEX', size:'Розмір M • 100 шт/уп', price:198},
-  {id:'latp', cat:'Латекс', name:'Латексні припудрені UNEX', size:'100 шт/уп', price:200},
-  {id:'latb', cat:'Латекс', name:'Латекс білий (пудра)', size:'100 пар/уп', price:230},
-  {id:'vinyl', cat:'Вініл', name:'Вінілові UNEX', size:'Розмір L • 100 шт/уп', price:125},
-  {id:'tpe', cat:'Вініл', name:'TPE (для HoReCa)', size:'100 шт/уп', price:185},
-  {id:'mask', cat:'Маски', name:'Маски медичні чорні 3-шарові', size:'50 шт/коробка', price:120},
+  {id:'n4m', cat:'Нітрил', name:'Нітрилові 4 г блакитні UNEX', size:'Розмір M • 100 шт/уп', price:225, hit:true, img:'img/nitril42.png'},
+  {id:'n4l', cat:'Нітрил', name:'Нітрилові 4 г блакитні UNEX', size:'Розмір L • 100 шт/уп', price:190, hit:true, img:'img/nitril42.png'},
+  {id:'nc4m', cat:'Нітрил', name:'Нітрилові чорні 4 г UNEX', size:'Розмір M • 100 шт/уп', price:275, img:'img/nitril22.png'},
+  {id:'ncxl', cat:'Нітрил', name:'Нітрилові чорні UNEX', size:'Розмір XL • 100 шт/уп', price:192, img:'img/nitril22.png'},
+  {id:'natur', cat:'Нітрил', name:'Нітрил натуральний (ХС–ХЛ)', size:'100 шт/пачка', price:245, img:'img/nitril22.png'},
+  {id:'lats', cat:'Латекс', name:'Латексні неопудрені UNEX', size:'Розмір S • 100 шт/уп', price:115, img:'img/lateks22.png'},
+  {id:'latmp', cat:'Латекс', name:'Латексні з мікропудрою UNEX', size:'Розмір M • 100 шт/уп', price:198, img:'img/lateks22.png'},
+  {id:'latp', cat:'Латекс', name:'Латексні припудрені UNEX', size:'100 шт/уп', price:200, img:'img/lateks22.png'},
+  {id:'latb', cat:'Латекс', name:'Латекс білий (пудра)', size:'100 пар/уп', price:230, img:'img/lateks22.png'},
+  {id:'vinyl', cat:'Вініл', name:'Вінілові UNEX', size:'Розмір L • 100 шт/уп', price:125, img:'img/vinil22.png'},
+  {id:'tpe', cat:'Вініл', name:'TPE (для HoReCa)', size:'100 шт/уп', price:185, img:'img/vinil22.png'},
+  {id:'mask', cat:'Маски', name:'Маски медичні чорні 3-шарові', size:'50 шт/коробка', price:120, img:'img/maska2.png'},
 ];
 
 let cart = {}; // id -> qty
@@ -279,19 +288,23 @@ function renderCatalog() {
   const grid = document.getElementById('catalog-grid');
   grid.innerHTML = PRODUCTS.map(p => `
     <div class="card">
-      <span class="cat">${p.cat}</span>
-      ${p.hit ? '<span class="tag hit">ХІТ</span>' : ''}
-      <h3>${p.name}</h3>
-      <div class="size">${p.size}</div>
-      <div class="price">${p.price} <small>грн</small></div>
-      <div class="row">
-        ${cart[p.id] ? `
-          <div class="qty">
-            <button onclick="chg('${p.id}',-1)">−</button>
-            <span>${cart[p.id]}</span>
-            <button onclick="chg('${p.id}',1)">+</button>
-          </div>` : `
-          <button class="btn-add" onclick="chg('${p.id}',1)">+ Додати</button>`}
+      <div class="img-wrap"><img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'"></div>
+      <div class="body">
+        <span class="cat">${p.cat}</span>
+        ${p.hit ? '<span class="tag hit">ХІТ</span>' : ''}
+        ${p.stock !== false ? '<span class="tag stock">В наявності</span>' : ''}
+        <h3>${p.name}</h3>
+        <div class="size">${p.size}</div>
+        <div class="price">${p.price} <small>грн</small></div>
+        <div class="row">
+          ${cart[p.id] ? `
+            <div class="qty">
+              <button onclick="chg('${p.id}',-1)">−</button>
+              <span>${cart[p.id]}</span>
+              <button onclick="chg('${p.id}',1)">+</button>
+            </div>` : `
+            <button class="btn-add" onclick="chg('${p.id}',1)">+ Додати</button>`}
+        </div>
       </div>
     </div>`).join('');
 }
