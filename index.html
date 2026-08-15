@@ -7,35 +7,39 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root {
-  --bg: #f7f9fb;
-  --bg2: #eef2f6;
+  --bg: #fafafa;
+  --bg2: #f2f2f2;
   --surface: #ffffff;
-  --text: #0f172a;
-  --text2: #5b6b7f;
-  --text3: #8b98a9;
-  --line: #e3e9f0;
-  --accent: #0f766e;
-  --accent-strong: #115e59;
-  --accent-soft: #e6f4f2;
-  --ok: #0f766e;
+  --text: #121212;
+  --text2: #5c6470;
+  --text3: #8a929e;
+  --line: #e5e5e5;
+  --accent: #ea5b13;
+  --accent-strong: #d14e0e;
+  --accent-soft: #fdeee4;
+  --secondary: #ffd000;
+  --accent-blue: #1ba5f5;
+  --ok: #2e9e5b;
   --danger: #dc2626;
   --radius: 16px;
   --radius-sm: 10px;
-  --shadow: 0 1px 2px rgba(15,23,42,.05), 0 4px 16px rgba(15,23,42,.06);
-  --shadow-lg: 0 8px 32px rgba(15,23,42,.10);
+  --shadow: 0 1px 2px rgba(20,20,20,.05), 0 4px 16px rgba(20,20,20,.06);
+  --shadow-lg: 0 8px 32px rgba(20,20,20,.10);
 }
 body.dark {
-  --bg: #0d1219;
-  --bg2: #131a24;
-  --surface: #161f2b;
-  --text: #e7edf3;
-  --text2: #9fb0c2;
-  --text3: #6b7d90;
-  --line: #223042;
-  --accent: #2dd4bf;
-  --accent-strong: #5eead4;
-  --accent-soft: #123c37;
-  --ok: #34d399;
+  --bg: #12122b;
+  --bg2: #1a1a38;
+  --surface: #1e1e40;
+  --text: #f0f0f5;
+  --text2: #b0b3c4;
+  --text3: #7d8098;
+  --line: #2c2c52;
+  --accent: #ff7a33;
+  --accent-strong: #ff8f52;
+  --accent-soft: #3d2438;
+  --secondary: #ffd000;
+  --accent-blue: #4db8ff;
+  --ok: #3dd68c;
   --danger: #f87171;
   --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.35);
   --shadow-lg: 0 8px 32px rgba(0,0,0,.5);
@@ -48,7 +52,7 @@ body { font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Rob
 /* ===== Header ===== */
 .header { padding:20px 20px 16px; }
 .brand { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
-.brand .logo { width:38px; height:38px; border-radius:12px; background:var(--accent); display:flex; align-items:center; justify-content:center; }
+.brand .logo { width:38px; height:38px; border-radius:12px; background:var(--accent); display:flex; align-items:center; justify-content:center; box-shadow:0 3px 10px rgba(234,91,19,.3); }
 .brand .logo svg { width:22px; height:22px; }
 .brand .name { font-size:17px; font-weight:800; letter-spacing:-.02em; }
 .brand .name span { color:var(--accent); }
@@ -60,6 +64,8 @@ body { font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Rob
 .chip { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--text2); background:var(--bg2); border-radius:999px; padding:6px 12px; }
 .chip svg { width:14px; height:14px; flex:none; }
 .chip.acc { color:var(--accent-strong); background:var(--accent-soft); }
+.chip.blue { color:#0b7ec4; background:#e3f3fd; }
+body.dark .chip.blue { color:#4db8ff; background:#12314a; }
 
 /* ===== Tabs ===== */
 .tabs { position:sticky; top:0; z-index:50; display:flex; gap:4px; padding:8px 16px; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-bottom:1px solid var(--line); }
@@ -192,7 +198,8 @@ body.dark .flag.hit { background:#e2e8f0; color:#0f172a; }
     <p>Нітрил, латекс, вініл та TPE. Відправка день у день, безкоштовна доставка від 50 коробок.</p>
     <div class="meta">
       <span class="chip acc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Відправка сьогодні</span>
-      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4z"/><path d="m9 12 2 2 4-4"/></svg>ISO 13485</span>
+      <span class="chip blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4z"/><path d="m9 12 2 2 4-4"/></svg>ISO 13485</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.3 7 8.7 5 8.7-5"/></svg>Склад Київ</span>
     </div>
   </div>
 </div>
@@ -318,8 +325,8 @@ const tg = window.Telegram?.WebApp;
 if (tg) {
   tg.ready();
   tg.expand();
-  tg.setHeaderColor(tg.colorScheme === 'dark' ? '#0d1219' : '#f7f9fb');
-  tg.setBackgroundColor(tg.colorScheme === 'dark' ? '#0d1219' : '#f7f9fb');
+  tg.setHeaderColor('#ea5b13');
+  tg.setBackgroundColor(tg.colorScheme === 'dark' ? '#12122b' : '#fafafa');
   if (tg.colorScheme === 'dark') document.body.classList.add('dark');
   tg.MainButton.hide();
   tg.onEvent('mainButtonClicked', submitOrder);
