@@ -103,7 +103,9 @@ body.dark .flag.hit { background:#121212; color:#ffd000; }
 .qty { display:flex; align-items:center; gap:6px; }
 .qty button { width:30px; height:30px; border-radius:var(--radius-sm); border:1px solid var(--line); background:var(--surface); color:var(--accent-strong); font-size:17px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; }
 .qty button:active { background:var(--accent-soft); }
-.qty span { min-width:22px; text-align:center; font-weight:800; font-size:15px; }
+.qty input.qty-input { width:44px; height:30px; text-align:center; font-weight:800; font-size:14px; border:1px solid var(--line); border-radius:var(--radius-sm); background:var(--bg); color:var(--text); -moz-appearance:textfield; appearance:textfield; outline:none; }
+.qty input.qty-input:focus { border-color:var(--accent); }
+.qty input.qty-input::-webkit-inner-spin-button, .qty input.qty-input::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
 
 /* ===== Calc ===== */
 .calc-card { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px; margin-bottom:12px; box-shadow:var(--shadow); }
@@ -225,6 +227,10 @@ body.dark .flag.hit { background:#121212; color:#ffd000; }
         <option value="clinic">Медцентр / клініка</option>
         <option value="beauty">Салон краси / тату</option>
         <option value="horeca">HoReCa (ресторан / кафе)</option>
+        <option value="vet">Ветеринарна клініка</option>
+        <option value="lab">Лабораторія</option>
+        <option value="auto">Автосервіс / СТО</option>
+        <option value="prod">Виробництво / цех</option>
       </select>
     </div>
     <div class="field">
@@ -244,7 +250,7 @@ body.dark .flag.hit { background:#121212; color:#ffd000; }
   <div class="calc-card">
     <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></svg>Рекомендований набір на місяць</h3>
     <p style="font-size:13px;color:var(--text2);line-height:1.6" id="calc-pack"></p>
-    <button class="btn-primary" style="margin-top:14px" id="calc-add-btn" onclick="addCalcPack()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Додати набір у заявку</button>
+    <button class="btn-primary hidden" style="margin-top:14px" id="calc-add-btn" onclick="addCalcPack()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Додати набір у заявку</button>
   </div>
 </div>
 
@@ -344,7 +350,7 @@ const PRODUCTS = [
   {id:'latp', cat:'Латекс', name:'Латексні припудрені', size:'100 шт/уп', price:200, img:'img/lateks22.png'},
   {id:'latb', cat:'Латекс', name:'Латекс білий', size:'100 пар/уп', price:230, img:'img/lateks22.png'},
   {id:'vinyl', cat:'Вініл', name:'Вінілові', size:'Розмір L, 100 шт/уп', price:125, img:'img/vinil22.png'},
-  {id:'tpe', cat:'TPE', name:'TPE для HoReCa', size:'100 шт/уп', price:185, img:'img/vinil22.png'},
+  {id:'tpe', cat:'TPE', name:'TPE для HoReCa', size:'Чорні M, 200 шт/уп', price:145, img:'img/vinil22.png'},
   {id:'mask', cat:'Маски', name:'Маски медичні чорні', size:'3-шарові, 50 шт/кор', price:120, img:'img/maska2.png'},
 ];
 
@@ -371,7 +377,7 @@ function renderCatalog() {
           ${cart[p.id] ? `
             <div class="qty">
               <button onclick="chg('${p.id}',-1)">−</button>
-              <span>${cart[p.id]}</span>
+              <input type="number" class="qty-input" value="${cart[p.id]}" min="1" onchange="setQty('${p.id}',this.value)">
               <button onclick="chg('${p.id}',1)">+</button>
             </div>` : `
             <button class="btn-add" onclick="chg('${p.id}',1)">
@@ -388,6 +394,17 @@ function chg(id, d) {
   if (!p) return;
   cart[id] = (cart[id] || 0) + d;
   if (cart[id] <= 0) delete cart[id];
+  renderCatalog();
+  updateCartbar();
+}
+
+function setQty(id, val) {
+  const q = parseInt(val, 10);
+  if (isNaN(q) || q <= 0) {
+    cart[id] = 1;
+  } else {
+    cart[id] = Math.min(q, 9999);
+  }
   renderCatalog();
   updateCartbar();
 }
@@ -465,6 +482,10 @@ const CALC = {
   clinic: {label:'Кількість кабінетів', per:40, pack:[{id:'n4m',n:2}]},
   beauty: {label:'Кількість майстрів', per:15, pack:[{id:'nc4m',n:1},{id:'natur',n:1}]},
   horeca: {label:'Кількість точок або кухарів', per:25, pack:[{id:'vinyl',n:2},{id:'tpe',n:1}]},
+  vet:    {label:'Кількість лікарів / кабінетів', per:35, pack:[{id:'n4m',n:2},{id:'latmp',n:1}]},
+  lab:    {label:'Кількість співробітників', per:30, pack:[{id:'lats',n:2},{id:'n4l',n:1}]},
+  auto:   {label:'Кількість майстрів', per:20, pack:[{id:'nc4m',n:2},{id:'natur',n:1}]},
+  prod:   {label:'Кількість робочих місць', per:25, pack:[{id:'vinyl',n:2},{id:'latp',n:1}]},
 };
 function runCalc() {
   const type = document.getElementById('calc-type').value;
@@ -482,6 +503,7 @@ function runCalc() {
   }).join('\n');
   document.getElementById('calc-pack').textContent = pack;
   document.getElementById('calc-add-btn').dataset.type = type;
+  document.getElementById('calc-add-btn').classList.remove('hidden');
 }
 function addCalcPack() {
   const type = document.getElementById('calc-add-btn').dataset.type || 'dent';
