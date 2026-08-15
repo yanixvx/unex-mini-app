@@ -49,6 +49,15 @@ html { -webkit-text-size-adjust: 100%; }
 body { font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--text); padding-bottom:96px; font-size:15px; line-height:1.45; }
 .hidden { display:none !important; }
 
+/* ===== Toasts ===== */
+#toasts { position:fixed; top:10px; left:0; right:0; z-index:300; display:flex; flex-direction:column; align-items:center; gap:8px; pointer-events:none; padding:0 16px; }
+.toast { background:var(--surface); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow-lg); padding:10px 18px; font-size:13.5px; font-weight:700; display:flex; align-items:center; gap:9px; max-width:100%; animation:toast-in .25s ease; }
+.toast .ok { width:22px; height:22px; border-radius:50%; background:var(--ok); color:#fff; display:flex; align-items:center; justify-content:center; flex:none; }
+.toast .ok svg { width:13px; height:13px; }
+.toast.out { animation:toast-out .25s ease forwards; }
+@keyframes toast-in { from { opacity:0; transform:translateY(-14px);} to { opacity:1; transform:none;} }
+@keyframes toast-out { to { opacity:0; transform:translateY(-14px);} }
+
 /* ===== Header ===== */
 .header { padding:20px 20px 16px; }
 .brand { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
@@ -81,31 +90,58 @@ body.dark .tab.active { color:var(--accent); }
 
 /* ===== Catalog ===== */
 .grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.card { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); display:flex; flex-direction:column; }
+.card { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); display:flex; flex-direction:column; cursor:pointer; }
 .card .media { position:relative; background:var(--bg2); aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; }
 .card .media img { width:100%; height:100%; object-fit:contain; padding:14px; transition:transform .3s ease; }
 .card:active .media img { transform:scale(1.04); }
 .card .flags { position:absolute; top:10px; left:10px; display:flex; gap:6px; }
 .flag { font-size:10px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; padding:4px 8px; border-radius:8px; }
 .flag.hit { background:#121212; color:#ffd000; }
-body.dark .flag.hit { background:#121212; color:#ffd000; }
 .flag.stock { background:var(--accent-soft); color:var(--accent-strong); }
 .card .body { padding:12px; display:flex; flex-direction:column; flex:1; }
 .card .cat { font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); margin-bottom:4px; }
 .card h3 { font-size:13.5px; font-weight:700; letter-spacing:-.01em; line-height:1.3; margin-bottom:2px; }
-.card .size { font-size:11.5px; color:var(--text3); margin-bottom:10px; }
+.card .sizes { font-size:11.5px; color:var(--text3); margin-bottom:10px; }
 .card .bottom { margin-top:auto; display:flex; align-items:center; justify-content:space-between; }
 .price { font-size:17px; font-weight:800; letter-spacing:-.02em; }
 .price small { font-size:11px; font-weight:500; color:var(--text3); }
-.btn-add { display:flex; align-items:center; gap:5px; background:var(--accent); color:#fff; border:none; border-radius:var(--radius-sm); padding:9px 13px; font-size:13px; font-weight:700; cursor:pointer; transition:transform .1s, background .15s; }
-.btn-add:active { transform:scale(.95); background:var(--accent-strong); }
-.btn-add svg { width:15px; height:15px; }
-.qty { display:flex; align-items:center; gap:6px; }
-.qty button { width:30px; height:30px; border-radius:var(--radius-sm); border:1px solid var(--line); background:var(--surface); color:var(--accent-strong); font-size:17px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; }
-.qty button:active { background:var(--accent-soft); }
-.qty input.qty-input { width:44px; height:30px; text-align:center; font-weight:800; font-size:14px; border:1px solid var(--line); border-radius:var(--radius-sm); background:var(--bg); color:var(--text); -moz-appearance:textfield; appearance:textfield; outline:none; }
-.qty input.qty-input:focus { border-color:var(--accent); }
-.qty input.qty-input::-webkit-inner-spin-button, .qty input.qty-input::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
+
+/* ===== Product detail sheet ===== */
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; animation:fade .2s ease; }
+.sheet { position:fixed; bottom:0; left:0; right:0; z-index:210; background:var(--surface); border-radius:24px 24px 0 0; max-height:92vh; overflow-y:auto; animation:sheet-up .3s cubic-bezier(.32,.72,.35,1); }
+@keyframes sheet-up { from { transform:translateY(100%);} to { transform:none;} }
+.sheet .handle { width:44px; height:5px; border-radius:3px; background:var(--line); margin:10px auto 0; }
+.sheet .grip { padding:0 20px; }
+.sheet .hero-img { background:var(--bg2); border-radius:18px; margin:14px 20px 0; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.sheet .hero-img img { max-width:100%; max-height:100%; object-fit:contain; }
+.sheet .thumb-row { display:flex; gap:10px; margin:12px 20px 0; }
+.sheet .thumb { width:64px; height:64px; border-radius:12px; background:var(--bg2); border:2px solid transparent; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
+.sheet .thumb.active { border-color:var(--accent); }
+.sheet .thumb img { max-width:90%; max-height:90%; object-fit:contain; }
+.sheet .title { font-size:19px; font-weight:800; letter-spacing:-.02em; margin:16px 0 4px; }
+.sheet .cat-line { font-size:11px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; color:var(--accent); margin-top:14px; }
+.sheet .desc { font-size:13.5px; color:var(--text2); line-height:1.6; margin:8px 0 14px; }
+.size-row { margin-bottom:14px; }
+.size-row .lbl { font-size:12.5px; font-weight:700; color:var(--text2); margin-bottom:8px; }
+.sizes-pick { display:flex; gap:8px; flex-wrap:wrap; }
+.size-pick { min-width:52px; padding:10px 14px; border-radius:12px; border:1.5px solid var(--line); background:var(--surface); color:var(--text); font-size:14px; font-weight:800; cursor:pointer; text-align:center; transition:all .15s; }
+.size-pick.active { border-color:var(--accent); background:var(--accent-soft); color:var(--accent-strong); }
+.size-pick .pr { display:block; font-size:10px; font-weight:600; color:var(--text3); margin-top:2px; }
+.size-pick.active .pr { color:var(--accent-strong); }
+.sheet .qty-line { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.sheet .qty-line .lbl { font-size:12.5px; font-weight:700; color:var(--text2); }
+.sheet .qty-line .qty { display:flex; align-items:center; gap:10px; }
+.sheet .qty-line .qty button { width:36px; height:36px; border-radius:12px; border:1px solid var(--line); background:var(--bg); color:var(--accent-strong); font-size:19px; font-weight:800; cursor:pointer; }
+.sheet .qty-line .qty button:active { background:var(--accent-soft); }
+.sheet .qty-line .qty input { width:52px; height:36px; text-align:center; font-weight:800; font-size:16px; border:1px solid var(--line); border-radius:12px; background:var(--bg); color:var(--text); -moz-appearance:textfield; appearance:textfield; outline:none; }
+.sheet .qty-line .qty input:focus { border-color:var(--accent); }
+.sheet .qty-line .qty input::-webkit-inner-spin-button, .sheet .qty-line .qty input::-webkit-outer-spin-button { -webkit-appearance:none; }
+.sheet .total-line { display:flex; align-items:center; justify-content:space-between; padding:14px 0 8px; border-top:1px solid var(--line); }
+.sheet .total-line .t { font-size:13px; color:var(--text2); font-weight:600; }
+.sheet .total-line .v { font-size:22px; font-weight:800; letter-spacing:-.02em; }
+.btn-add-sheet { width:100%; display:flex; align-items:center; justify-content:center; gap:8px; background:var(--accent); color:#fff; border:none; border-radius:16px; padding:15px; font-size:15px; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(234,91,19,.3); margin:8px 0 20px; }
+.btn-add-sheet:active { transform:scale(.98); background:var(--accent-strong); }
+.btn-add-sheet svg { width:18px; height:18px; }
 
 /* ===== Calc ===== */
 .calc-card { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px; margin-bottom:12px; box-shadow:var(--shadow); }
@@ -120,7 +156,7 @@ body.dark .flag.hit { background:#121212; color:#ffd000; }
 .result p { font-size:12.5px; color:var(--text2); margin-top:3px; line-height:1.5; }
 
 /* ===== Buttons ===== */
-.btn-primary { width:100%; display:flex; align-items:center; justify-content:center; gap:8px; background:var(--accent); color:#fff; border:none; border-radius:14px; padding:14px; font-size:15px; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(15,118,110,.25); transition:transform .1s, background .15s; }
+.btn-primary { width:100%; display:flex; align-items:center; justify-content:center; gap:8px; background:var(--accent); color:#fff; border:none; border-radius:14px; padding:14px; font-size:15px; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(234,91,19,.25); transition:transform .1s, background .15s; }
 .btn-primary:active { transform:scale(.98); background:var(--accent-strong); }
 .btn-primary svg { width:18px; height:18px; }
 .btn-sec { width:100%; background:var(--surface); color:var(--text); border:1px solid var(--line); border-radius:14px; padding:12px; font-size:14px; font-weight:700; cursor:pointer; margin-top:8px; }
@@ -163,7 +199,7 @@ body.dark .flag.hit { background:#121212; color:#ffd000; }
 .cartbar { position:fixed; bottom:0; left:0; right:0; background:var(--surface); border-top:1px solid var(--line); padding:10px 16px calc(10px + env(safe-area-inset-bottom)); display:flex; align-items:center; justify-content:space-between; gap:12px; z-index:100; }
 .cartbar .info { font-size:12.5px; color:var(--text2); line-height:1.35; }
 .cartbar .info b { font-size:17px; color:var(--text); display:block; }
-.btn-cart { background:var(--accent); color:#fff; border:none; border-radius:14px; padding:12px 22px; font-size:14px; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(15,118,110,.25); }
+.btn-cart { background:var(--accent); color:#fff; border:none; border-radius:14px; padding:12px 22px; font-size:14px; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(234,91,19,.25); }
 .btn-cart:active { transform:scale(.97); }
 
 /* ===== Success ===== */
@@ -174,20 +210,11 @@ body.dark .flag.hit { background:#121212; color:#ffd000; }
 .success-wrap p { color:var(--text2); font-size:14px; line-height:1.6; max-width:34ch; margin:0 auto; }
 .back-home { display:inline-flex; align-items:center; gap:7px; margin-top:26px; background:var(--accent); color:#fff; border:none; border-radius:14px; padding:13px 28px; font-size:14px; font-weight:800; cursor:pointer; }
 .back-home svg { width:16px; height:16px; }
-
-/* Skeleton */
-.skel { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
-.skel .sk { background:linear-gradient(90deg,var(--bg2) 25%,var(--line) 50%,var(--bg2) 75%); background-size:200% 100%; animation:shimmer 1.2s infinite; }
-.skel .sk-img { aspect-ratio:1/1; }
-.skel .sk-l1 { height:12px; width:60%; margin:10px 12px 0; border-radius:4px; }
-.skel .sk-l2 { height:10px; width:80%; margin:7px 12px 0; border-radius:4px; }
-.skel .sk-l3 { height:10px; width:45%; margin:7px 12px 12px; border-radius:4px; }
-@keyframes shimmer { 0% { background-position:200% 0;} 100% { background-position:-200% 0;} }
 </style>
 </head>
 <body>
 
-<div class="header">
+<div class="header" id="header">
   <div class="brand">
     <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12a2 2 0 0 1 2 2v14l-4-2-4 2-4-2-4 2V4a2 2 0 0 1 2-2z"/><path d="M9 8h6M12 5v6"/></svg></div>
     <div>
@@ -206,12 +233,14 @@ body.dark .flag.hit { background:#121212; color:#ffd000; }
   </div>
 </div>
 
-<div class="tabs">
+<div class="tabs" id="tabs">
   <div class="tab active" data-tab="catalog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12a2 2 0 0 1 2 2v14l-4-2-4 2-4-2-4 2V4a2 2 0 0 1 2-2z"/><path d="M9 8h6M12 5v6"/></svg>Каталог</div>
   <div class="tab" data-tab="calc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h.01M12 19h.01"/></svg>Калькулятор</div>
   <div class="tab" data-tab="cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>Заявка</div>
   <div class="tab" data-tab="contacts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Контакти</div>
 </div>
+
+<div id="toasts"></div>
 
 <div id="tab-catalog" class="section active">
   <div class="grid" id="catalog-grid"></div>
@@ -320,6 +349,39 @@ body.dark .flag.hit { background:#121212; color:#ffd000; }
   </div>
 </div>
 
+<!-- Product detail sheet -->
+<div id="sheet-overlay" class="overlay hidden" onclick="closeSheet()"></div>
+<div id="product-sheet" class="sheet hidden">
+  <div class="handle"></div>
+  <div class="hero-img" id="sheet-img"></div>
+  <div class="thumb-row" id="sheet-thumbs"></div>
+  <div class="grip">
+    <div class="cat-line" id="sheet-cat"></div>
+    <div class="title" id="sheet-title"></div>
+    <div class="desc" id="sheet-desc"></div>
+    <div class="size-row">
+      <div class="lbl">Оберіть розмір</div>
+      <div class="sizes-pick" id="sheet-sizes"></div>
+    </div>
+    <div class="qty-line">
+      <div class="lbl">Кількість упаковок</div>
+      <div class="qty">
+        <button onclick="sheetQty(-1)">−</button>
+        <input type="number" id="sheet-qty" value="1" min="1" onchange="sheetQtyInput(this.value)">
+        <button onclick="sheetQty(1)">+</button>
+      </div>
+    </div>
+    <div class="total-line">
+      <div class="t">Сума</div>
+      <div class="v" id="sheet-total">0 грн</div>
+    </div>
+    <button class="btn-add-sheet" onclick="addFromSheet()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      Додати в заявку
+    </button>
+  </div>
+</div>
+
 <div class="cartbar hidden" id="cartbar">
   <div class="info"><b id="cartbar-count">0</b><span id="cartbar-sum"></span></div>
   <button class="btn-cart" onclick="goCart()">Оформити заявку</button>
@@ -338,29 +400,82 @@ if (tg) {
   tg.onEvent('mainButtonClicked', submitOrder);
 }
 
-// ===== DATA =====
+// ===== DATA: товар -> варіанти розмірів (ціни Prom.ua) =====
 const PRODUCTS = [
-  {id:'n4m', cat:'Нітрил', name:'Нітрилові 4 г блакитні', size:'Розмір M, 100 шт/уп', price:225, hit:true, img:'img/nitril42.png'},
-  {id:'n4l', cat:'Нітрил', name:'Нітрилові 4 г блакитні', size:'Розмір L, 100 шт/уп', price:190, hit:true, img:'img/nitril42.png'},
-  {id:'nc4m', cat:'Нітрил', name:'Нітрилові чорні 4 г', size:'Розмір M, 100 шт/уп', price:275, img:'img/nitril22.png'},
-  {id:'ncxl', cat:'Нітрил', name:'Нітрилові чорні', size:'Розмір XL, 100 шт/уп', price:192, img:'img/nitril22.png'},
-  {id:'natur', cat:'Нітрил', name:'Нітрил натуральний', size:'ХС–ХЛ, 100 шт/пачка', price:245, img:'img/nitril22.png'},
-  {id:'lats', cat:'Латекс', name:'Латексні неопудрені', size:'Розмір S, 100 шт/уп', price:115, img:'img/lateks22.png'},
-  {id:'latmp', cat:'Латекс', name:'Латексні з мікропудрою', size:'Розмір M, 100 шт/уп', price:198, img:'img/lateks22.png'},
-  {id:'latp', cat:'Латекс', name:'Латексні припудрені', size:'100 шт/уп', price:200, img:'img/lateks22.png'},
-  {id:'latb', cat:'Латекс', name:'Латекс білий', size:'100 пар/уп', price:230, img:'img/lateks22.png'},
-  {id:'vinyl', cat:'Вініл', name:'Вінілові', size:'Розмір L, 100 шт/уп', price:125, img:'img/vinil22.png'},
-  {id:'tpe', cat:'TPE', name:'TPE для HoReCa', size:'Чорні M, 200 шт/уп', price:145, img:'img/vinil22.png'},
-  {id:'mask', cat:'Маски', name:'Маски медичні чорні', size:'3-шарові, 50 шт/кор', price:120, img:'img/maska2.png'},
+  {
+    id:'n4', cat:'Нітрил', name:'Нітрилові 4 г блакитні UNEX', hit:true,
+    desc:'Міцні медичні рукавички для стоматології, медичних центрів, лабораторій та HoReCa. Без латексу, без алергії, текстурована поверхня для надійного захоплення. Сертифіковано ISO 13485.',
+    img:'img/nitril42.png', packImg:'img/upakovka2.png',
+    variants:[{size:'M', price:225},{size:'L', price:190}]
+  },
+  {
+    id:'nc', cat:'Нітрил', name:'Нітрилові чорні UNEX',
+    desc:'Чорні нітрилові рукавички для салонів краси, тату, автосервісів та промисловості. Стильний вигляд, висока міцність, без пудри. Не медичні, універсальні.',
+    img:'img/nitril22.png', packImg:'img/upakovka2.png',
+    variants:[{size:'M', price:275},{size:'XL', price:192}]
+  },
+  {
+    id:'nat', cat:'Нітрил', name:'Нітрил натуральний', 
+    desc:'Нітрилові рукавички натурального кольору в асортименті розмірів. Висока еластичність та міцність, підходять для медицини та промисловості.',
+    img:'img/nitril22.png', packImg:'img/upakovka2.png',
+    variants:[{size:'ХС–ХЛ', price:245}]
+  },
+  {
+    id:'lat', cat:'Латекс', name:'Латексні UNEX',
+    desc:'Латексні рукавички різних типів: неопудрені, з мікропудрою та припудрені. Висока чутливість та еластичність, ідеальні для хірургії та точних маніпуляцій.',
+    img:'img/lateks22.png', packImg:'img/upakovka2.png',
+    variants:[
+      {size:'S (неопудр.)', price:115},
+      {size:'M (мікропудра)', price:198},
+      {size:'M (припудр.)', price:200},
+      {size:'білий (пудра)', price:230}
+    ]
+  },
+  {
+    id:'vin', cat:'Вініл', name:'Вінілові UNEX',
+    desc:'Бюджетні вінілові рукавички для HoReCa, прибирання, харчової промисловості та побуту. Висока щільність, комфорт при довгому носінні.',
+    img:'img/vinil22.png', packImg:'img/upakovka2.png',
+    variants:[{size:'L', price:125}]
+  },
+  {
+    id:'tpe', cat:'TPE', name:'TPE для HoReCa',
+    desc:'Термопластичні еластомерні рукавички, ідеальні для харчової промисловості та HoReCa. Без запаху, без латексу, приємні на дотик.',
+    img:'img/vinil22.png', packImg:'img/upakovka2.png',
+    variants:[{size:'M', price:145}]
+  },
+  {
+    id:'mask', cat:'Маски', name:'Маски медичні чорні',
+    desc:'Тришарові захисні маски чорного кольору. Щільна посадка, комфортне дихання, фільтрація 3 шари. Упаковка 50 шт.',
+    img:'img/maska2.png', packImg:'img/upakovka2.png',
+    variants:[{size:'50 шт/кор', price:120}]
+  },
 ];
 
-let cart = {};
+let cart = {};       // 'productId|size' -> qty
+let sheetProduct = null;
+let sheetSize = null;
+let sheetQtyVal = 1;
+
+// ===== Toasts =====
+function toast(msg) {
+  const box = document.getElementById('toasts');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = '<span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>' + msg + '</span>';
+  box.appendChild(el);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 260); }, 2200);
+}
 
 // ===== Catalog =====
 function renderCatalog() {
   const grid = document.getElementById('catalog-grid');
-  grid.innerHTML = PRODUCTS.map(p => `
-    <div class="card">
+  grid.innerHTML = PRODUCTS.map(p => {
+    const prices = p.variants.map(v => v.price);
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+    const priceStr = min === max ? min + ' <small>грн</small>' : min + '–' + max + ' <small>грн</small>';
+    const sizesStr = p.variants.map(v => v.size.replace(/\([^)]*\)/,'').trim()).join(', ');
+    return `<div class="card" onclick="openSheet('${p.id}')">
       <div class="media">
         <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.style.visibility='hidden'">
         <div class="flags">
@@ -371,47 +486,100 @@ function renderCatalog() {
       <div class="body">
         <span class="cat">${p.cat}</span>
         <h3>${p.name}</h3>
-        <div class="size">${p.size}</div>
+        <div class="sizes">Розміри: ${sizesStr}</div>
         <div class="bottom">
-          <div class="price">${p.price} <small>грн</small></div>
-          ${cart[p.id] ? `
-            <div class="qty">
-              <button onclick="chg('${p.id}',-1)">−</button>
-              <input type="number" class="qty-input" value="${cart[p.id]}" min="1" onchange="setQty('${p.id}',this.value)">
-              <button onclick="chg('${p.id}',1)">+</button>
-            </div>` : `
-            <button class="btn-add" onclick="chg('${p.id}',1)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-              Додати
-            </button>`}
+          <div class="price">${priceStr}</div>
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
-function chg(id, d) {
+// ===== Product sheet =====
+function openSheet(id) {
   const p = PRODUCTS.find(x => x.id === id);
   if (!p) return;
-  cart[id] = (cart[id] || 0) + d;
-  if (cart[id] <= 0) delete cart[id];
-  renderCatalog();
-  updateCartbar();
+  sheetProduct = p;
+  sheetSize = p.variants[0].size;
+  sheetQtyVal = 1;
+  renderSheet();
+  document.getElementById('sheet-overlay').classList.remove('hidden');
+  document.getElementById('product-sheet').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
 }
-
-function setQty(id, val) {
+function closeSheet() {
+  document.getElementById('sheet-overlay').classList.add('hidden');
+  document.getElementById('product-sheet').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+function renderSheet() {
+  const p = sheetProduct;
+  if (!p) return;
+  document.getElementById('sheet-img').innerHTML = `<img src="${p.img}" alt="${p.name}">`;
+  document.getElementById('sheet-thumbs').innerHTML =
+    `<div class="thumb active" onclick="sheetImg('${p.img}')"><img src="${p.img}"></div>` +
+    (p.packImg ? `<div class="thumb" onclick="sheetImg('${p.packImg}')"><img src="${p.packImg}"></div>` : '');
+  document.getElementById('sheet-cat').textContent = p.cat;
+  document.getElementById('sheet-title').textContent = p.name;
+  document.getElementById('sheet-desc').textContent = p.desc;
+  document.getElementById('sheet-sizes').innerHTML = p.variants.map(v =>
+    `<div class="size-pick ${v.size === sheetSize ? 'active' : ''}" onclick="sheetPickSize('${v.size}')">${v.size}<span class="pr">${v.price} грн</span></div>`
+  ).join('');
+  document.getElementById('sheet-qty').value = sheetQtyVal;
+  updateSheetTotal();
+}
+function sheetImg(src) {
+  document.getElementById('sheet-img').innerHTML = `<img src="${src}" alt="">`;
+  document.querySelectorAll('#sheet-thumbs .thumb').forEach(t => t.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+function sheetPickSize(s) {
+  sheetSize = s;
+  const p = sheetProduct;
+  document.getElementById('sheet-sizes').innerHTML = p.variants.map(v =>
+    `<div class="size-pick ${v.size === sheetSize ? 'active' : ''}" onclick="sheetPickSize('${v.size}')">${v.size}<span class="pr">${v.price} грн</span></div>`
+  ).join('');
+  updateSheetTotal();
+}
+function sheetQty(d) {
+  sheetQtyVal = Math.max(1, sheetQtyVal + d);
+  document.getElementById('sheet-qty').value = sheetQtyVal;
+  updateSheetTotal();
+}
+function sheetQtyInput(val) {
   const q = parseInt(val, 10);
-  if (isNaN(q) || q <= 0) {
-    cart[id] = 1;
-  } else {
-    cart[id] = Math.min(q, 9999);
-  }
+  sheetQtyVal = isNaN(q) || q < 1 ? 1 : Math.min(q, 9999);
+  document.getElementById('sheet-qty').value = sheetQtyVal;
+  updateSheetTotal();
+}
+function sheetPrice() {
+  const v = sheetProduct.variants.find(x => x.size === sheetSize);
+  return v ? v.price : 0;
+}
+function updateSheetTotal() {
+  document.getElementById('sheet-total').textContent = (sheetPrice() * sheetQtyVal) + ' грн';
+}
+function addFromSheet() {
+  const p = sheetProduct;
+  const v = p.variants.find(x => x.size === sheetSize);
+  const key = p.id + '|' + v.size;
+  cart[key] = (cart[key] || 0) + sheetQtyVal;
   renderCatalog();
   updateCartbar();
+  closeSheet();
+  toast('Додано: ' + p.name + ' (' + v.size + ') × ' + sheetQtyVal);
 }
 
 // ===== Cart bar =====
 function cartCount() { return Object.values(cart).reduce((a,b)=>a+b,0); }
-function cartSum() { return Object.entries(cart).reduce((s,[id,q]) => s + q * PRODUCTS.find(p=>p.id===id).price, 0); }
+function cartSum() {
+  return Object.entries(cart).reduce((s,[key,q]) => {
+    const [id, size] = key.split('|');
+    const p = PRODUCTS.find(x => x.id === id);
+    const v = p.variants.find(x => x.size === size);
+    return s + q * v.price;
+  }, 0);
+}
 function updateCartbar() {
   const bar = document.getElementById('cartbar');
   const n = cartCount();
@@ -456,36 +624,42 @@ function renderCart() {
   empty.classList.add('hidden');
   form.classList.remove('hidden');
   total.classList.remove('hidden');
-  list.innerHTML = items.map(([id,q]) => {
+  list.innerHTML = items.map(([key,q]) => {
+    const [id, size] = key.split('|');
     const p = PRODUCTS.find(x => x.id === id);
+    const v = p.variants.find(x => x.size === size);
     return `<div class="cart-item">
       <div class="top">
-        <div><h4>${p.name}</h4><div class="sub">${p.size}</div></div>
-        <button class="btn-del" onclick="delItem('${id}')">✕</button>
+        <div><h4>${p.name}</h4><div class="sub">Розмір ${v.size}</div></div>
+        <button class="btn-del" onclick="delItem('${key}')">✕</button>
       </div>
       <div class="bot">
         <div class="qty">
-          <button onclick="chg('${id}',-1)">−</button><span>${q}</span><button onclick="chg('${id}',1)">+</button>
+          <button onclick="cartChg('${key}',-1)">−</button><span style="min-width:24px;text-align:center;font-weight:800">${q}</span><button onclick="cartChg('${key}',1)">+</button>
         </div>
-        <div class="line-price">${q * p.price} грн</div>
+        <div class="line-price">${q * v.price} грн</div>
       </div>
     </div>`;
   }).join('');
   document.getElementById('cart-total-sum').textContent = cartSum() + ' грн';
 }
-
-function delItem(id) { delete cart[id]; renderCatalog(); updateCartbar(); renderCart(); }
+function cartChg(key, d) {
+  cart[key] = (cart[key] || 0) + d;
+  if (cart[key] <= 0) delete cart[key];
+  renderCatalog(); updateCartbar(); renderCart();
+}
+function delItem(key) { delete cart[key]; renderCatalog(); updateCartbar(); renderCart(); }
 
 // ===== Calculator =====
 const CALC = {
-  dent:   {label:'Кількість стоматологічних крісел', per:60, pack:[{id:'n4m',n:2},{id:'n4l',n:1}]},
-  clinic: {label:'Кількість кабінетів', per:40, pack:[{id:'n4m',n:2}]},
-  beauty: {label:'Кількість майстрів', per:15, pack:[{id:'nc4m',n:1},{id:'natur',n:1}]},
-  horeca: {label:'Кількість точок або кухарів', per:25, pack:[{id:'vinyl',n:2},{id:'tpe',n:1}]},
-  vet:    {label:'Кількість лікарів / кабінетів', per:35, pack:[{id:'n4m',n:2},{id:'latmp',n:1}]},
-  lab:    {label:'Кількість співробітників', per:30, pack:[{id:'lats',n:2},{id:'n4l',n:1}]},
-  auto:   {label:'Кількість майстрів', per:20, pack:[{id:'nc4m',n:2},{id:'natur',n:1}]},
-  prod:   {label:'Кількість робочих місць', per:25, pack:[{id:'vinyl',n:2},{id:'latp',n:1}]},
+  dent:   {label:'Кількість стоматологічних крісел', per:60, pack:[{id:'n4',size:'M',n:2},{id:'n4',size:'L',n:1}]},
+  clinic: {label:'Кількість кабінетів', per:40, pack:[{id:'n4',size:'M',n:2}]},
+  beauty: {label:'Кількість майстрів', per:15, pack:[{id:'nc',size:'M',n:1},{id:'nat',size:'ХС–ХЛ',n:1}]},
+  horeca: {label:'Кількість точок або кухарів', per:25, pack:[{id:'vin',size:'L',n:2},{id:'tpe',size:'M',n:1}]},
+  vet:    {label:'Кількість лікарів / кабінетів', per:35, pack:[{id:'n4',size:'M',n:2},{id:'lat',size:'M (мікропудра)',n:1}]},
+  lab:    {label:'Кількість співробітників', per:30, pack:[{id:'lat',size:'S (неопудр.)',n:2},{id:'n4',size:'L',n:1}]},
+  auto:   {label:'Кількість майстрів', per:20, pack:[{id:'nc',size:'M',n:2},{id:'nat',size:'ХС–ХЛ',n:1}]},
+  prod:   {label:'Кількість робочих місць', per:25, pack:[{id:'vin',size:'L',n:2},{id:'lat',size:'M (припудр.)',n:1}]},
 };
 function runCalc() {
   const type = document.getElementById('calc-type').value;
@@ -499,7 +673,7 @@ function runCalc() {
   document.getElementById('calc-text').textContent = '≈ ' + (total*100) + ' рукавичок (100 шт в упаковці). Точний розрахунок залежить від інтенсивності, менеджер підкаже.';
   const pack = c.pack.map(p => {
     const prod = PRODUCTS.find(x => x.id === p.id);
-    return prod.name + ' (' + prod.size + ') × ' + (p.n * Math.max(1, Math.ceil(amount/2)));
+    return prod.name + ' (' + p.size + ') × ' + (p.n * Math.max(1, Math.ceil(amount/2)));
   }).join('\n');
   document.getElementById('calc-pack').textContent = pack;
   document.getElementById('calc-add-btn').dataset.type = type;
@@ -509,9 +683,12 @@ function addCalcPack() {
   const type = document.getElementById('calc-add-btn').dataset.type || 'dent';
   const amount = parseInt(document.getElementById('calc-amount').value) || 1;
   const mult = Math.max(1, Math.ceil(amount/2));
-  CALC[type].pack.forEach(p => { cart[p.id] = (cart[p.id] || 0) + p.n * mult; });
+  CALC[type].pack.forEach(p => {
+    const key = p.id + '|' + p.size;
+    cart[key] = (cart[key] || 0) + p.n * mult;
+  });
   renderCatalog(); updateCartbar();
-  document.getElementById('calc-pack').textContent = 'Набір додано у заявку, перейдіть у вкладку Заявка';
+  toast('Набір додано у заявку');
 }
 
 // ===== Submit =====
@@ -522,9 +699,11 @@ function submitOrder() {
     tg?.showAlert('Заповніть ім\'я та телефон');
     return;
   }
-  const items = Object.entries(cart).map(([id,q]) => {
+  const items = Object.entries(cart).map(([key,q]) => {
+    const [id, size] = key.split('|');
     const p = PRODUCTS.find(x => x.id === id);
-    return p.name + ' (' + p.size + '), ' + q + ' уп = ' + (q*p.price) + ' грн';
+    const v = p.variants.find(x => x.size === size);
+    return p.name + ' (' + size + '), ' + q + ' уп = ' + (q*v.price) + ' грн';
   }).join('\n');
   const comment = document.getElementById('f-comment').value.trim();
   const order = '🧤 НОВА ЗАЯВКА UNEX (Mini App)\n\n👤 ' + name + '\n📞 ' + phone + '\n\nЗамовлення:\n' + items + '\n\nРазом: ' + cartSum() + ' грн' + (comment ? '\nКоментар: ' + comment : '') + '\n\nTG ID: ' + (tg?.initDataUnsafe?.user?.id || '—') + ' | @' + (tg?.initDataUnsafe?.user?.username || '—');
@@ -534,14 +713,14 @@ function submitOrder() {
   document.getElementById('success').classList.remove('hidden');
   document.querySelectorAll('.section').forEach(x => x.classList.add('hidden'));
   document.getElementById('cartbar').classList.add('hidden');
-  document.querySelector('.tabs').classList.add('hidden');
-  document.querySelector('.header').classList.add('hidden');
+  document.getElementById('tabs').classList.add('hidden');
+  document.getElementById('header').classList.add('hidden');
 }
 function resetApp() {
   cart = {};
   document.getElementById('success').classList.add('hidden');
-  document.querySelector('.tabs').classList.remove('hidden');
-  document.querySelector('.header').classList.remove('hidden');
+  document.getElementById('tabs').classList.remove('hidden');
+  document.getElementById('header').classList.remove('hidden');
   renderCatalog(); updateCartbar();
 }
 
