@@ -3,253 +3,313 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>UNEX Medical — Каталог</title>
+<title>UNEX Medical</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root {
-  --bg: #f4f7fb;
-  --bg2: #eef2f8;
+  --bg: #f7f9fb;
+  --bg2: #eef2f6;
+  --surface: #ffffff;
   --text: #0f172a;
-  --sub: #64748b;
-  --accent: #0ea5e9;
-  --accent2: #2563eb;
-  --accent-grad: linear-gradient(135deg,#0ea5e9,#2563eb);
-  --card: #ffffff;
-  --border: #e2e8f0;
-  --green: #10b981;
-  --danger: #ef4444;
-  --shadow: 0 4px 16px rgba(37,99,235,.08);
-  --shadow-hover: 0 8px 24px rgba(37,99,235,.14);
+  --text2: #5b6b7f;
+  --text3: #8b98a9;
+  --line: #e3e9f0;
+  --accent: #0f766e;
+  --accent-strong: #115e59;
+  --accent-soft: #e6f4f2;
+  --ok: #0f766e;
+  --danger: #dc2626;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 1px 2px rgba(15,23,42,.05), 0 4px 16px rgba(15,23,42,.06);
+  --shadow-lg: 0 8px 32px rgba(15,23,42,.10);
 }
 body.dark {
-  --bg: #0b1220;
-  --bg2: #111a2e;
-  --text: #e2e8f0;
-  --sub: #94a3b8;
-  --card: #141e33;
-  --border: #1e293b;
-  --shadow: 0 4px 16px rgba(0,0,0,.35);
-  --shadow-hover: 0 8px 24px rgba(0,0,0,.5);
+  --bg: #0d1219;
+  --bg2: #131a24;
+  --surface: #161f2b;
+  --text: #e7edf3;
+  --text2: #9fb0c2;
+  --text3: #6b7d90;
+  --line: #223042;
+  --accent: #2dd4bf;
+  --accent-strong: #5eead4;
+  --accent-soft: #123c37;
+  --ok: #34d399;
+  --danger: #f87171;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.35);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.5);
 }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--text); padding-bottom:80px; }
+html { -webkit-text-size-adjust: 100%; }
+body { font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--text); padding-bottom:96px; font-size:15px; line-height:1.45; }
 .hidden { display:none !important; }
 
-/* Header */
-.header { background:linear-gradient(135deg,#0ea5e9 0%,#2563eb 55%,#1e40af 100%); color:#fff; padding:24px 16px 20px; position:relative; overflow:hidden; }
-.header::after { content:''; position:absolute; right:-40px; top:-40px; width:160px; height:160px; border-radius:50%; background:rgba(255,255,255,.08); }
-.header::before { content:''; position:absolute; right:30px; bottom:-60px; width:120px; height:120px; border-radius:50%; background:rgba(255,255,255,.06); }
-.header h1 { font-size:21px; font-weight:800; position:relative; z-index:1; }
-.header p { font-size:13px; opacity:.92; margin-top:4px; position:relative; z-index:1; }
-.header .badge { display:inline-block; background:rgba(255,255,255,.18); padding:4px 12px; border-radius:20px; font-size:11px; margin-top:10px; font-weight:600; position:relative; z-index:1; backdrop-filter:blur(4px); }
+/* ===== Header ===== */
+.header { padding:20px 20px 16px; }
+.brand { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+.brand .logo { width:38px; height:38px; border-radius:12px; background:var(--accent); display:flex; align-items:center; justify-content:center; }
+.brand .logo svg { width:22px; height:22px; }
+.brand .name { font-size:17px; font-weight:800; letter-spacing:-.02em; }
+.brand .name span { color:var(--accent); }
+.brand .sub { font-size:12px; color:var(--text2); font-weight:500; }
+.hero { background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:18px; box-shadow:var(--shadow); }
+.hero h1 { font-size:22px; font-weight:800; letter-spacing:-.03em; line-height:1.2; margin-bottom:6px; }
+.hero p { font-size:13.5px; color:var(--text2); max-width:46ch; }
+.hero .meta { display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
+.chip { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--text2); background:var(--bg2); border-radius:999px; padding:6px 12px; }
+.chip svg { width:14px; height:14px; flex:none; }
+.chip.acc { color:var(--accent-strong); background:var(--accent-soft); }
 
-/* Tabs */
-.tabs { display:flex; background:var(--bg2); position:sticky; top:0; z-index:50; border-bottom:1px solid var(--border); overflow-x:auto; padding:6px 8px; gap:6px; }
-.tab { flex:1; min-width:88px; padding:9px 8px; text-align:center; font-size:12px; font-weight:700; color:var(--sub); cursor:pointer; border-radius:12px; white-space:nowrap; transition:all .2s; }
-.tab.active { background:var(--accent-grad); color:#fff; box-shadow:0 2px 8px rgba(37,99,235,.3); }
+/* ===== Tabs ===== */
+.tabs { position:sticky; top:0; z-index:50; display:flex; gap:4px; padding:8px 16px; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-bottom:1px solid var(--line); }
+.tab { flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px 6px; border-radius:12px; font-size:13px; font-weight:700; color:var(--text2); cursor:pointer; transition:background .15s,color .15s; white-space:nowrap; }
+.tab svg { width:17px; height:17px; flex:none; }
+.tab.active { background:var(--surface); color:var(--accent-strong); box-shadow:var(--shadow); }
+body.dark .tab.active { color:var(--accent); }
 
-/* Sections */
+/* ===== Sections ===== */
 .section { padding:16px; display:none; }
-.section.active { display:block; }
+.section.active { display:block; animation:fade .25s ease; }
+@keyframes fade { from { opacity:0; transform:translateY(4px);} to { opacity:1; transform:none;} }
 
-/* Catalog cards */
+/* ===== Catalog ===== */
 .grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.card { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:0 0 14px; box-shadow:var(--shadow); display:flex; flex-direction:column; overflow:hidden; transition:box-shadow .2s, transform .15s; }
-.card:active { transform:scale(.97); box-shadow:var(--shadow-hover); }
-.card .img-wrap { background:var(--bg2); height:120px; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; }
-.card .img-wrap img { max-width:100%; max-height:100%; object-fit:contain; }
-.card .body { padding:12px 12px 0; }
-.card .cat { font-size:10px; text-transform:uppercase; letter-spacing:.6px; color:var(--accent); font-weight:800; }
-.card h3 { font-size:13px; margin:5px 0 3px; line-height:1.35; }
-.card .size { font-size:11px; color:var(--sub); margin-bottom:8px; }
-.card .price { font-size:17px; font-weight:800; color:var(--text); }
-.card .price small { font-size:11px; color:var(--sub); font-weight:400; }
-.card .row { display:flex; align-items:center; justify-content:space-between; margin-top:10px; }
-.btn-add { background:var(--accent-grad); color:#fff; border:none; border-radius:12px; padding:9px 14px; font-size:13px; font-weight:700; cursor:pointer; box-shadow:0 2px 8px rgba(37,99,235,.3); }
-.btn-add:active { transform:scale(.94); }
-.qty { display:flex; align-items:center; gap:8px; }
-.qty button { width:30px; height:30px; border-radius:10px; border:1px solid var(--border); background:var(--bg2); color:var(--text); font-size:16px; font-weight:700; cursor:pointer; }
-.qty button:active { background:var(--accent); color:#fff; }
-.qty span { min-width:24px; text-align:center; font-weight:800; font-size:15px; }
-.tag { display:inline-block; font-size:9px; padding:2px 8px; border-radius:10px; font-weight:800; margin-left:6px; text-transform:uppercase; letter-spacing:.4px; }
-.tag.hit { background:linear-gradient(135deg,#f59e0b,#ef4444); color:#fff; }
-.tag.stock { background:#dcfce7; color:#166534; }
+.card { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); display:flex; flex-direction:column; }
+.card .media { position:relative; background:var(--bg2); aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; }
+.card .media img { width:100%; height:100%; object-fit:contain; padding:14px; transition:transform .3s ease; }
+.card:active .media img { transform:scale(1.04); }
+.card .flags { position:absolute; top:10px; left:10px; display:flex; gap:6px; }
+.flag { font-size:10px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; padding:4px 8px; border-radius:8px; }
+.flag.hit { background:#0f172a; color:#fff; }
+body.dark .flag.hit { background:#e2e8f0; color:#0f172a; }
+.flag.stock { background:var(--accent-soft); color:var(--accent-strong); }
+.card .body { padding:12px; display:flex; flex-direction:column; flex:1; }
+.card .cat { font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); margin-bottom:4px; }
+.card h3 { font-size:13.5px; font-weight:700; letter-spacing:-.01em; line-height:1.3; margin-bottom:2px; }
+.card .size { font-size:11.5px; color:var(--text3); margin-bottom:10px; }
+.card .bottom { margin-top:auto; display:flex; align-items:center; justify-content:space-between; }
+.price { font-size:17px; font-weight:800; letter-spacing:-.02em; }
+.price small { font-size:11px; font-weight:500; color:var(--text3); }
+.btn-add { display:flex; align-items:center; gap:5px; background:var(--accent); color:#fff; border:none; border-radius:var(--radius-sm); padding:9px 13px; font-size:13px; font-weight:700; cursor:pointer; transition:transform .1s, background .15s; }
+.btn-add:active { transform:scale(.95); background:var(--accent-strong); }
+.btn-add svg { width:15px; height:15px; }
+.qty { display:flex; align-items:center; gap:6px; }
+.qty button { width:30px; height:30px; border-radius:var(--radius-sm); border:1px solid var(--line); background:var(--surface); color:var(--accent-strong); font-size:17px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.qty button:active { background:var(--accent-soft); }
+.qty span { min-width:22px; text-align:center; font-weight:800; font-size:15px; }
 
-/* Calculator */
-.calc-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:12px; }
-.calc-card h3 { font-size:15px; margin-bottom:12px; }
+/* ===== Calc ===== */
+.calc-card { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px; margin-bottom:12px; box-shadow:var(--shadow); }
+.calc-card h3 { font-size:15px; font-weight:800; letter-spacing:-.01em; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+.calc-card h3 svg { width:18px; height:18px; color:var(--accent); }
 .field { margin-bottom:12px; }
-.field label { display:block; font-size:12px; color:var(--sub); margin-bottom:5px; font-weight:600; }
-.field select,.field input { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:10px; background:var(--bg2); color:var(--text); font-size:14px; }
-.result { background:var(--bg2); border-radius:10px; padding:12px; margin-top:8px; }
-.result .num { font-size:22px; font-weight:800; color:var(--accent); }
-.result p { font-size:13px; color:var(--sub); margin-top:4px; }
+.field label { display:block; font-size:12.5px; font-weight:600; color:var(--text2); margin-bottom:6px; }
+.field select,.field input { width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:var(--radius-sm); background:var(--bg); color:var(--text); font-size:14.5px; font-family:inherit; outline:none; }
+.field select:focus,.field input:focus { border-color:var(--accent); }
+.result { background:var(--accent-soft); border-radius:var(--radius-sm); padding:14px; margin-top:12px; }
+.result .num { font-size:22px; font-weight:800; letter-spacing:-.02em; color:var(--accent-strong); }
+.result p { font-size:12.5px; color:var(--text2); margin-top:3px; line-height:1.5; }
 
-/* Cart bar */
-.cartbar { position:fixed; bottom:0; left:0; right:0; background:var(--card); border-top:1px solid var(--border); padding:10px 16px; display:flex; align-items:center; justify-content:space-between; z-index:100; }
-.cartbar .info { font-size:13px; }
-.cartbar .info b { font-size:16px; }
-.btn-cart { background:var(--accent-grad); color:#fff; border:none; border-radius:12px; padding:12px 20px; font-size:14px; font-weight:800; cursor:pointer; box-shadow:0 2px 8px rgba(37,99,235,.3); }
+/* ===== Buttons ===== */
+.btn-primary { width:100%; display:flex; align-items:center; justify-content:center; gap:8px; background:var(--accent); color:#fff; border:none; border-radius:14px; padding:14px; font-size:15px; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(15,118,110,.25); transition:transform .1s, background .15s; }
+.btn-primary:active { transform:scale(.98); background:var(--accent-strong); }
+.btn-primary svg { width:18px; height:18px; }
+.btn-sec { width:100%; background:var(--surface); color:var(--text); border:1px solid var(--line); border-radius:14px; padding:12px; font-size:14px; font-weight:700; cursor:pointer; margin-top:8px; }
+
+/* ===== Cart ===== */
+.cart-item { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:14px; margin-bottom:10px; box-shadow:var(--shadow); }
+.cart-item .top { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
+.cart-item h4 { font-size:13.5px; font-weight:700; line-height:1.3; }
+.cart-item .sub { font-size:11.5px; color:var(--text3); margin-top:2px; }
+.cart-item .bot { display:flex; justify-content:space-between; align-items:center; margin-top:12px; }
+.cart-item .line-price { font-weight:800; font-size:15px; }
+.btn-del { background:none; border:none; color:var(--text3); font-size:16px; cursor:pointer; padding:2px 6px; line-height:1; }
+.btn-del:active { color:var(--danger); }
+.total { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin:12px 0; display:flex; justify-content:space-between; align-items:center; font-weight:800; font-size:16px; box-shadow:var(--shadow); }
+.total small { font-size:11px; color:var(--text3); font-weight:500; display:block; }
+.form-field { margin-bottom:12px; }
+.form-field label { display:block; font-size:12.5px; font-weight:600; color:var(--text2); margin-bottom:6px; }
+.form-field input,.form-field textarea,.form-field select { width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:var(--radius-sm); background:var(--bg); color:var(--text); font-size:14.5px; font-family:inherit; outline:none; }
+.form-field input:focus,.form-field textarea:focus { border-color:var(--accent); }
+.note { font-size:12px; color:var(--text3); text-align:center; margin-top:12px; line-height:1.55; }
+.empty { text-align:center; padding:48px 20px; color:var(--text3); }
+.empty .ic { width:56px; height:56px; margin:0 auto 14px; border-radius:20px; background:var(--bg2); display:flex; align-items:center; justify-content:center; }
+.empty .ic svg { width:26px; height:26px; }
+.empty p { font-size:13.5px; }
+
+/* ===== Contacts ===== */
+.contact-item { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:14px; margin-bottom:10px; display:flex; align-items:center; gap:13px; cursor:pointer; box-shadow:var(--shadow); transition:transform .1s; }
+.contact-item:active { transform:scale(.98); }
+.contact-item .ico { width:42px; height:42px; border-radius:13px; display:flex; align-items:center; justify-content:center; background:var(--accent-soft); color:var(--accent-strong); flex:none; }
+.contact-item .ico svg { width:21px; height:21px; }
+.contact-item .t { font-size:14px; font-weight:700; }
+.contact-item .s { font-size:12px; color:var(--text3); margin-top:1px; }
+.info-box { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px; margin-top:12px; box-shadow:var(--shadow); }
+.info-box h4 { font-size:13px; font-weight:800; margin-bottom:10px; color:var(--accent-strong); display:flex; align-items:center; gap:7px; }
+.info-box h4 svg { width:16px; height:16px; }
+.info-box p { font-size:13px; color:var(--text2); line-height:1.7; }
+.info-box p b { color:var(--text); font-weight:600; }
+
+/* ===== Cart bar ===== */
+.cartbar { position:fixed; bottom:0; left:0; right:0; background:var(--surface); border-top:1px solid var(--line); padding:10px 16px calc(10px + env(safe-area-inset-bottom)); display:flex; align-items:center; justify-content:space-between; gap:12px; z-index:100; }
+.cartbar .info { font-size:12.5px; color:var(--text2); line-height:1.35; }
+.cartbar .info b { font-size:17px; color:var(--text); display:block; }
+.btn-cart { background:var(--accent); color:#fff; border:none; border-radius:14px; padding:12px 22px; font-size:14px; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(15,118,110,.25); }
 .btn-cart:active { transform:scale(.97); }
 
-/* Contacts */
-.contact-item { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:10px; display:flex; align-items:center; gap:12px; cursor:pointer; }
-.contact-item .ico { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; background:var(--bg2); }
-.contact-item .t { font-size:14px; font-weight:600; }
-.contact-item .s { font-size:12px; color:var(--sub); }
-.info-box { background:var(--bg2); border-radius:14px; padding:16px; margin-top:12px; }
-.info-box h4 { font-size:13px; margin-bottom:8px; color:var(--accent); }
-.info-box p { font-size:13px; color:var(--sub); line-height:1.6; }
+/* ===== Success ===== */
+.success-wrap { text-align:center; padding:70px 30px; }
+.success-wrap .big { width:84px; height:84px; margin:0 auto 20px; border-radius:50%; background:var(--accent-soft); display:flex; align-items:center; justify-content:center; }
+.success-wrap .big svg { width:40px; height:40px; color:var(--accent-strong); }
+.success-wrap h2 { font-size:21px; font-weight:800; letter-spacing:-.02em; margin-bottom:8px; }
+.success-wrap p { color:var(--text2); font-size:14px; line-height:1.6; max-width:34ch; margin:0 auto; }
+.back-home { display:inline-flex; align-items:center; gap:7px; margin-top:26px; background:var(--accent); color:#fff; border:none; border-radius:14px; padding:13px 28px; font-size:14px; font-weight:800; cursor:pointer; }
+.back-home svg { width:16px; height:16px; }
 
-/* Cart page */
-.cart-item { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px; margin-bottom:10px; }
-.cart-item .top { display:flex; justify-content:space-between; align-items:center; }
-.cart-item h4 { font-size:13px; }
-.cart-item .sub { font-size:12px; color:var(--sub); margin-top:2px; }
-.cart-item .bot { display:flex; justify-content:space-between; align-items:center; margin-top:8px; }
-.cart-item .price { font-weight:800; }
-.btn-del { background:none; border:none; color:var(--danger); font-size:12px; cursor:pointer; }
-.total { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; margin:12px 0; display:flex; justify-content:space-between; font-weight:700; font-size:16px; }
-.btn-primary { width:100%; background:var(--accent-grad); color:#fff; border:none; border-radius:14px; padding:14px; font-size:15px; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(37,99,235,.3); }
-.btn-primary:active { transform:scale(.98); }
-.btn-sec { width:100%; background:var(--bg2); color:var(--text); border:1px solid var(--border); border-radius:12px; padding:12px; font-size:14px; font-weight:600; cursor:pointer; margin-top:8px; }
-.form-field { margin-bottom:12px; }
-.form-field label { display:block; font-size:12px; color:var(--sub); margin-bottom:5px; font-weight:600; }
-.form-field input,.form-field textarea,.form-field select { width:100%; padding:11px 12px; border:1px solid var(--border); border-radius:10px; background:var(--bg2); color:var(--text); font-size:14px; font-family:inherit; }
-.note { font-size:12px; color:var(--sub); text-align:center; margin-top:12px; line-height:1.5; }
-
-/* Success */
-.success-wrap { text-align:center; padding:60px 30px; }
-.success-wrap .big { font-size:56px; margin-bottom:16px; }
-.success-wrap h2 { font-size:20px; margin-bottom:8px; }
-.success-wrap p { color:var(--sub); font-size:14px; line-height:1.6; }
-.back-home { display:inline-block; margin-top:24px; background:var(--accent); color:#fff; border:none; border-radius:12px; padding:12px 28px; font-size:14px; font-weight:700; cursor:pointer; }
+/* Skeleton */
+.skel { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+.skel .sk { background:linear-gradient(90deg,var(--bg2) 25%,var(--line) 50%,var(--bg2) 75%); background-size:200% 100%; animation:shimmer 1.2s infinite; }
+.skel .sk-img { aspect-ratio:1/1; }
+.skel .sk-l1 { height:12px; width:60%; margin:10px 12px 0; border-radius:4px; }
+.skel .sk-l2 { height:10px; width:80%; margin:7px 12px 0; border-radius:4px; }
+.skel .sk-l3 { height:10px; width:45%; margin:7px 12px 12px; border-radius:4px; }
+@keyframes shimmer { 0% { background-position:200% 0;} 100% { background-position:-200% 0;} }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>🧤 UNEX Medical Products</h1>
-  <p>Медичні рукавички оптом • Склад у Києві • Відправка день у день</p>
-  <span class="badge">🚚 Безкоштовна доставка від 50 коробок</span>
+  <div class="brand">
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12a2 2 0 0 1 2 2v14l-4-2-4 2-4-2-4 2V4a2 2 0 0 1 2-2z"/><path d="M9 8h6M12 5v6"/></svg></div>
+    <div>
+      <div class="name">UNEX <span>Medical</span></div>
+      <div class="sub">Рукавички оптом та в роздріб</div>
+    </div>
+  </div>
+  <div class="hero">
+    <h1>Медичні рукавички зі складу в Києві</h1>
+    <p>Нітрил, латекс, вініл та TPE. Відправка день у день, безкоштовна доставка від 50 коробок.</p>
+    <div class="meta">
+      <span class="chip acc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Відправка сьогодні</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4z"/><path d="m9 12 2 2 4-4"/></svg>ISO 13485</span>
+    </div>
+  </div>
 </div>
 
 <div class="tabs">
-  <div class="tab active" data-tab="catalog">🛒 Каталог</div>
-  <div class="tab" data-tab="calc">🧮 Калькулятор</div>
-  <div class="tab" data-tab="cart">🛍️ Заявка</div>
-  <div class="tab" data-tab="contacts">📞 Контакти</div>
+  <div class="tab active" data-tab="catalog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12a2 2 0 0 1 2 2v14l-4-2-4 2-4-2-4 2V4a2 2 0 0 1 2-2z"/><path d="M9 8h6M12 5v6"/></svg>Каталог</div>
+  <div class="tab" data-tab="calc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h.01M12 19h.01"/></svg>Калькулятор</div>
+  <div class="tab" data-tab="cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>Заявка</div>
+  <div class="tab" data-tab="contacts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Контакти</div>
 </div>
 
-<!-- ============ CATALOG ============ -->
 <div id="tab-catalog" class="section active">
   <div class="grid" id="catalog-grid"></div>
 </div>
 
-<!-- ============ CALCULATOR ============ -->
 <div id="tab-calc" class="section">
   <div class="calc-card">
-    <h3>🧮 Скільки рукавичок потрібно?</h3>
+    <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h.01M12 19h.01"/></svg>Скільки рукавичок потрібно?</h3>
     <div class="field">
-      <label>Тип закладу</label>
+      <label for="calc-type">Тип закладу</label>
       <select id="calc-type">
-        <option value="dent">🦷 Стоматологія</option>
-        <option value="clinic">🏥 Медцентр / клініка</option>
-        <option value="beauty">💅 Салон краси / тату</option>
-        <option value="horeca">🍽️ HoReCa (ресторан/кафе)</option>
+        <option value="dent">Стоматологія</option>
+        <option value="clinic">Медцентр / клініка</option>
+        <option value="beauty">Салон краси / тату</option>
+        <option value="horeca">HoReCa (ресторан / кафе)</option>
       </select>
     </div>
     <div class="field">
-      <label id="calc-label">Кількість робочих місць (крісел)</label>
+      <label id="calc-label" for="calc-amount">Кількість стоматологічних крісел</label>
       <input type="number" id="calc-amount" min="1" max="200" value="2">
     </div>
     <div class="field">
-      <label>Робочих днів на місяць</label>
+      <label for="calc-days">Робочих днів на місяць</label>
       <input type="number" id="calc-days" min="1" max="31" value="22">
     </div>
-    <button class="btn-primary" onclick="runCalc()">Розрахувати</button>
+    <button class="btn-primary" onclick="runCalc()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Розрахувати</button>
     <div class="result hidden" id="calc-result">
       <div class="num" id="calc-num"></div>
       <p id="calc-text"></p>
     </div>
   </div>
   <div class="calc-card">
-    <h3>📦 Рекомендований набір на місяць</h3>
-    <p style="font-size:13px;color:var(--sub);line-height:1.6" id="calc-pack"></p>
-    <button class="btn-primary" style="margin-top:12px" id="calc-add-btn" onclick="addCalcPack()">Додати набір у заявку</button>
+    <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></svg>Рекомендований набір на місяць</h3>
+    <p style="font-size:13px;color:var(--text2);line-height:1.6" id="calc-pack"></p>
+    <button class="btn-primary" style="margin-top:14px" id="calc-add-btn" onclick="addCalcPack()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Додати набір у заявку</button>
   </div>
 </div>
 
-<!-- ============ CART ============ -->
 <div id="tab-cart" class="section">
-  <h3 style="margin-bottom:12px">🛍️ Ваша заявка</h3>
+  <h3 style="margin-bottom:14px;font-size:16px;font-weight:800;letter-spacing:-.01em">Ваша заявка</h3>
   <div id="cart-list"></div>
-  <div class="total hidden" id="cart-total"></div>
+  <div class="total hidden" id="cart-total"><span>Разом<small>орієнтовно, без доставки</small></span><span id="cart-total-sum"></span></div>
   <div id="cart-form-wrap" class="hidden">
     <div class="form-field">
-      <label>Ваше ім'я / назва закладу *</label>
+      <label for="f-name">Ім'я або назва закладу</label>
       <input type="text" id="f-name" placeholder="Іван / Клініка «Дент»">
     </div>
     <div class="form-field">
-      <label>Телефон / Telegram *</label>
+      <label for="f-phone">Телефон або Telegram</label>
       <input type="text" id="f-phone" placeholder="+380 __ ___ __ __">
     </div>
     <div class="form-field">
-      <label>Коментар</label>
-      <textarea id="f-comment" rows="2" placeholder="Потрібно до п'ятниці, доставка НП..."></textarea>
+      <label for="f-comment">Коментар</label>
+      <textarea id="f-comment" rows="2" placeholder="Потрібно до п'ятниці, доставка Нова Пошта"></textarea>
     </div>
-    <button class="btn-primary" onclick="submitOrder()">📨 Відправити заявку</button>
-    <p class="note">Надсилаємо заявку менеджеру UNEX. <br>Передзвонимо протягом 15 хв (у робочий час).</p>
+    <button class="btn-primary" onclick="submitOrder()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg>Надіслати заявку</button>
+    <p class="note">Заявка надходить менеджеру UNEX. Передзвонимо протягом 15 хвилин у робочий час (Пн–Сб 9:00–19:00).</p>
   </div>
-  <p class="note hidden" id="cart-empty">Кошик порожній. Додайте товари з каталогу 🛒</p>
+  <div class="empty hidden" id="cart-empty">
+    <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg></div>
+    <p>Кошик порожній. Оберіть товари в каталозі.</p>
+  </div>
 </div>
 
-<!-- ============ CONTACTS ============ -->
 <div id="tab-contacts" class="section">
   <div class="contact-item" onclick="openLink('https://t.me/UnexMedicalProducts')">
-    <div class="ico">✈️</div>
-    <div><div class="t">Telegram-канал</div><div class="s">@UnexMedicalProducts — новини та акції</div></div>
+    <div class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.8 19c-.2 1-.8 1.3-1.7.8l-4.7-3.5-2.3 2.2c-.3.3-.5.5-.9.5l.3-4.8L18 6.2c.4-.3-.1-.5-.6-.2L7 12.4l-4.6-1.4c-1-.3-1-1 .2-1.5L20.4 2.8c.8-.3 1.6.2 1.5 1.5z"/></svg></div>
+    <div><div class="t">Telegram-канал</div><div class="s">@UnexMedicalProducts, новини та акції</div></div>
   </div>
   <div class="contact-item" onclick="openLink('https://wa.me/380939007777?text=Добрий%20день!%20Цікавить%20прайс%20UNEX')">
-    <div class="ico">💬</div>
-    <div><div class="t">WhatsApp</div><div class="s">+380 93 900 77 77 — прайс та замовлення</div></div>
+    <div class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.5-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.7-1-2.3-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15L2 22l5.1-1.3A10 10 0 1 0 12 2z"/></svg></div>
+    <div><div class="t">WhatsApp</div><div class="s">+380 93 900 77 77, прайс та замовлення</div></div>
   </div>
   <div class="contact-item" onclick="openLink('https://t.me/unexmedbot')">
-    <div class="ico">🤖</div>
-    <div><div class="t">Наш бот</div><div class="s">@unexmedbot — відповідає миттєво</div></div>
+    <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h6v6H9z"/><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/></svg></div>
+    <div><div class="t">Бот UNEX</div><div class="s">@unexmedbot, відповідає миттєво</div></div>
   </div>
   <div class="contact-item" onclick="openLink('https://medi-unex.com.ua')">
-    <div class="ico">🌐</div>
+    <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
     <div><div class="t">Сайт</div><div class="s">medi-unex.com.ua</div></div>
   </div>
   <div class="contact-item" onclick="openLink('https://prom.ua/ua/c2874377-unex.html')">
-    <div class="ico">🛒</div>
-    <div><div class="t">Prom.ua</div><div class="s">Наш магазин на маркетплейсі</div></div>
+    <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg></div>
+    <div><div class="t">Prom.ua</div><div class="s">Магазин Unex на маркетплейсі</div></div>
   </div>
   <div class="info-box">
-    <h4>📍 Доставка та оплата</h4>
-    <p>🛒 Самовивіз: Київ, Софіївська Борщагівка<br>
-    🚚 Нова Пошта, Укрпошта, Meest<br>
-    📦 Безкоштовна доставка від 50 коробок<br>
-    💳 Оплата: безготівковий розрахунок, на карту<br>
-    🕐 Працюємо Пн–Сб 9:00–19:00</p>
+    <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4z"/><path d="m9 12 2 2 4-4"/></svg>Доставка та оплата</h4>
+    <p><b>Самовивіз:</b> Київ, Софіївська Борщагівка<br>
+    <b>Доставка:</b> Нова Пошта, Укрпошта, Meest<br>
+    <b>Безкоштовно</b> від 50 коробок<br>
+    <b>Оплата:</b> безготівковий розрахунок або на карту<br>
+    <b>Графік:</b> Пн–Сб 9:00–19:00</p>
   </div>
 </div>
 
-<!-- ============ SUCCESS ============ -->
 <div id="success" class="hidden">
   <div class="success-wrap">
-    <div class="big">✅</div>
-    <h2>Заявку відправлено!</h2>
+    <div class="big"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+    <h2>Заявку відправлено</h2>
     <p>Дякуємо! Менеджер UNEX зв'яжеться з вами найближчим часом.</p>
-    <button class="back-home" onclick="resetApp()">На головну</button>
+    <button class="back-home" onclick="resetApp()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>На головну</button>
   </div>
 </div>
 
-<!-- Cart bar -->
 <div class="cartbar hidden" id="cartbar">
-  <div class="info">У заявці: <b id="cartbar-count">0</b> шт.<br><span style="font-size:12px;color:var(--sub)" id="cartbar-sum"></span></div>
-  <button class="btn-cart" onclick="goCart()">Оформити →</button>
+  <div class="info"><b id="cartbar-count">0</b><span id="cartbar-sum"></span></div>
+  <button class="btn-cart" onclick="goCart()">Оформити заявку</button>
 </div>
 
 <script>
@@ -258,52 +318,59 @@ const tg = window.Telegram?.WebApp;
 if (tg) {
   tg.ready();
   tg.expand();
-  tg.setHeaderColor('#2563eb');
-  tg.setBackgroundColor(tg.colorScheme === 'dark' ? '#0b1220' : '#f4f7fb');
+  tg.setHeaderColor(tg.colorScheme === 'dark' ? '#0d1219' : '#f7f9fb');
+  tg.setBackgroundColor(tg.colorScheme === 'dark' ? '#0d1219' : '#f7f9fb');
   if (tg.colorScheme === 'dark') document.body.classList.add('dark');
   tg.MainButton.hide();
   tg.onEvent('mainButtonClicked', submitOrder);
 }
 
-// ===== DATA (ціни з Prom.ua, серпень 2026; фото з medi-unex.com.ua) =====
+// ===== DATA =====
 const PRODUCTS = [
-  {id:'n4m', cat:'Нітрил', name:'Нітрилові 4 г блакитні UNEX', size:'Розмір M • 100 шт/уп', price:225, hit:true, img:'img/nitril42.png'},
-  {id:'n4l', cat:'Нітрил', name:'Нітрилові 4 г блакитні UNEX', size:'Розмір L • 100 шт/уп', price:190, hit:true, img:'img/nitril42.png'},
-  {id:'nc4m', cat:'Нітрил', name:'Нітрилові чорні 4 г UNEX', size:'Розмір M • 100 шт/уп', price:275, img:'img/nitril22.png'},
-  {id:'ncxl', cat:'Нітрил', name:'Нітрилові чорні UNEX', size:'Розмір XL • 100 шт/уп', price:192, img:'img/nitril22.png'},
-  {id:'natur', cat:'Нітрил', name:'Нітрил натуральний (ХС–ХЛ)', size:'100 шт/пачка', price:245, img:'img/nitril22.png'},
-  {id:'lats', cat:'Латекс', name:'Латексні неопудрені UNEX', size:'Розмір S • 100 шт/уп', price:115, img:'img/lateks22.png'},
-  {id:'latmp', cat:'Латекс', name:'Латексні з мікропудрою UNEX', size:'Розмір M • 100 шт/уп', price:198, img:'img/lateks22.png'},
-  {id:'latp', cat:'Латекс', name:'Латексні припудрені UNEX', size:'100 шт/уп', price:200, img:'img/lateks22.png'},
-  {id:'latb', cat:'Латекс', name:'Латекс білий (пудра)', size:'100 пар/уп', price:230, img:'img/lateks22.png'},
-  {id:'vinyl', cat:'Вініл', name:'Вінілові UNEX', size:'Розмір L • 100 шт/уп', price:125, img:'img/vinil22.png'},
-  {id:'tpe', cat:'Вініл', name:'TPE (для HoReCa)', size:'100 шт/уп', price:185, img:'img/vinil22.png'},
-  {id:'mask', cat:'Маски', name:'Маски медичні чорні 3-шарові', size:'50 шт/коробка', price:120, img:'img/maska2.png'},
+  {id:'n4m', cat:'Нітрил', name:'Нітрилові 4 г блакитні', size:'Розмір M, 100 шт/уп', price:225, hit:true, img:'img/nitril42.png'},
+  {id:'n4l', cat:'Нітрил', name:'Нітрилові 4 г блакитні', size:'Розмір L, 100 шт/уп', price:190, hit:true, img:'img/nitril42.png'},
+  {id:'nc4m', cat:'Нітрил', name:'Нітрилові чорні 4 г', size:'Розмір M, 100 шт/уп', price:275, img:'img/nitril22.png'},
+  {id:'ncxl', cat:'Нітрил', name:'Нітрилові чорні', size:'Розмір XL, 100 шт/уп', price:192, img:'img/nitril22.png'},
+  {id:'natur', cat:'Нітрил', name:'Нітрил натуральний', size:'ХС–ХЛ, 100 шт/пачка', price:245, img:'img/nitril22.png'},
+  {id:'lats', cat:'Латекс', name:'Латексні неопудрені', size:'Розмір S, 100 шт/уп', price:115, img:'img/lateks22.png'},
+  {id:'latmp', cat:'Латекс', name:'Латексні з мікропудрою', size:'Розмір M, 100 шт/уп', price:198, img:'img/lateks22.png'},
+  {id:'latp', cat:'Латекс', name:'Латексні припудрені', size:'100 шт/уп', price:200, img:'img/lateks22.png'},
+  {id:'latb', cat:'Латекс', name:'Латекс білий', size:'100 пар/уп', price:230, img:'img/lateks22.png'},
+  {id:'vinyl', cat:'Вініл', name:'Вінілові', size:'Розмір L, 100 шт/уп', price:125, img:'img/vinil22.png'},
+  {id:'tpe', cat:'TPE', name:'TPE для HoReCa', size:'100 шт/уп', price:185, img:'img/vinil22.png'},
+  {id:'mask', cat:'Маски', name:'Маски медичні чорні', size:'3-шарові, 50 шт/кор', price:120, img:'img/maska2.png'},
 ];
 
-let cart = {}; // id -> qty
+let cart = {};
 
-// ===== Render catalog =====
+// ===== Catalog =====
 function renderCatalog() {
   const grid = document.getElementById('catalog-grid');
   grid.innerHTML = PRODUCTS.map(p => `
     <div class="card">
-      <div class="img-wrap"><img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'"></div>
+      <div class="media">
+        <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.style.visibility='hidden'">
+        <div class="flags">
+          ${p.hit ? '<span class="flag hit">Хіт</span>' : ''}
+          <span class="flag stock">В наявності</span>
+        </div>
+      </div>
       <div class="body">
         <span class="cat">${p.cat}</span>
-        ${p.hit ? '<span class="tag hit">ХІТ</span>' : ''}
-        ${p.stock !== false ? '<span class="tag stock">В наявності</span>' : ''}
         <h3>${p.name}</h3>
         <div class="size">${p.size}</div>
-        <div class="price">${p.price} <small>грн</small></div>
-        <div class="row">
+        <div class="bottom">
+          <div class="price">${p.price} <small>грн</small></div>
           ${cart[p.id] ? `
             <div class="qty">
               <button onclick="chg('${p.id}',-1)">−</button>
               <span>${cart[p.id]}</span>
               <button onclick="chg('${p.id}',1)">+</button>
             </div>` : `
-            <button class="btn-add" onclick="chg('${p.id}',1)">+ Додати</button>`}
+            <button class="btn-add" onclick="chg('${p.id}',1)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              Додати
+            </button>`}
         </div>
       </div>
     </div>`).join('');
@@ -326,8 +393,8 @@ function updateCartbar() {
   const n = cartCount();
   if (n > 0) {
     bar.classList.remove('hidden');
-    document.getElementById('cartbar-count').textContent = n;
-    document.getElementById('cartbar-sum').textContent = '≈ ' + cartSum() + ' грн';
+    document.getElementById('cartbar-count').textContent = n + ' шт · ' + cartSum() + ' грн';
+    document.getElementById('cartbar-sum').textContent = '';
   } else bar.classList.add('hidden');
 }
 
@@ -348,7 +415,7 @@ function goCart() {
   renderCart();
 }
 
-// ===== Cart =====
+// ===== Cart page =====
 function renderCart() {
   const list = document.getElementById('cart-list');
   const items = Object.entries(cart);
@@ -368,27 +435,29 @@ function renderCart() {
   list.innerHTML = items.map(([id,q]) => {
     const p = PRODUCTS.find(x => x.id === id);
     return `<div class="cart-item">
-      <div class="top"><h4>${p.name}</h4><button class="btn-del" onclick="delItem('${id}')">✕</button></div>
-      <div class="sub">${p.size}</div>
+      <div class="top">
+        <div><h4>${p.name}</h4><div class="sub">${p.size}</div></div>
+        <button class="btn-del" onclick="delItem('${id}')">✕</button>
+      </div>
       <div class="bot">
         <div class="qty">
           <button onclick="chg('${id}',-1)">−</button><span>${q}</span><button onclick="chg('${id}',1)">+</button>
         </div>
-        <div class="price">${q * p.price} грн</div>
+        <div class="line-price">${q * p.price} грн</div>
       </div>
     </div>`;
   }).join('');
-  total.innerHTML = `<span>Разом</span><span>${cartSum()} грн</span>`;
+  document.getElementById('cart-total-sum').textContent = cartSum() + ' грн';
 }
 
 function delItem(id) { delete cart[id]; renderCatalog(); updateCartbar(); renderCart(); }
 
 // ===== Calculator =====
 const CALC = {
-  dent:   {label:'Кількість стоматологічних крісел', per: 60, pack:[{id:'n4m',n:2},{id:'n4l',n:1}]},
-  clinic: {label:'Кількість кабінетів', per: 40, pack:[{id:'n4m',n:2}]},
-  beauty: {label:'Кількість майстрів', per: 15, pack:[{id:'nc4m',n:1},{id:'natur',n:1}]},
-  horeca: {label:'Кількість точок / кухарів', per: 25, pack:[{id:'vinyl',n:2},{id:'tpe',n:1}]},
+  dent:   {label:'Кількість стоматологічних крісел', per:60, pack:[{id:'n4m',n:2},{id:'n4l',n:1}]},
+  clinic: {label:'Кількість кабінетів', per:40, pack:[{id:'n4m',n:2}]},
+  beauty: {label:'Кількість майстрів', per:15, pack:[{id:'nc4m',n:1},{id:'natur',n:1}]},
+  horeca: {label:'Кількість точок або кухарів', per:25, pack:[{id:'vinyl',n:2},{id:'tpe',n:1}]},
 };
 function runCalc() {
   const type = document.getElementById('calc-type').value;
@@ -398,13 +467,13 @@ function runCalc() {
   document.getElementById('calc-label').textContent = c.label;
   const total = Math.ceil(amount * c.per * days / 100);
   document.getElementById('calc-result').classList.remove('hidden');
-  document.getElementById('calc-num').textContent = '≈ ' + total + ' уп/міс';
-  document.getElementById('calc-text').textContent = `≈ ${total * 100} рукавичок на місяць (100 шт в упаковці). Точний розрахунок залежить від інтенсивності — менеджер підкаже.`;
+  document.getElementById('calc-num').textContent = '≈ ' + total + ' уп / міс';
+  document.getElementById('calc-text').textContent = '≈ ' + (total*100) + ' рукавичок (100 шт в упаковці). Точний розрахунок залежить від інтенсивності, менеджер підкаже.';
   const pack = c.pack.map(p => {
     const prod = PRODUCTS.find(x => x.id === p.id);
-    return `${prod.name} (${prod.size}) × ${p.n * Math.max(1, Math.ceil(amount/2))}`;
+    return prod.name + ' (' + prod.size + ') × ' + (p.n * Math.max(1, Math.ceil(amount/2)));
   }).join('\n');
-  document.getElementById('calc-pack').textContent = pack || '—';
+  document.getElementById('calc-pack').textContent = pack;
   document.getElementById('calc-add-btn').dataset.type = type;
 }
 function addCalcPack() {
@@ -413,7 +482,7 @@ function addCalcPack() {
   const mult = Math.max(1, Math.ceil(amount/2));
   CALC[type].pack.forEach(p => { cart[p.id] = (cart[p.id] || 0) + p.n * mult; });
   renderCatalog(); updateCartbar();
-  document.getElementById('calc-pack').textContent = '✅ Набір додано у заявку! Перейдіть у «Заявка»';
+  document.getElementById('calc-pack').textContent = 'Набір додано у заявку, перейдіть у вкладку Заявка';
 }
 
 // ===== Submit =====
@@ -421,37 +490,33 @@ function submitOrder() {
   const name = document.getElementById('f-name').value.trim();
   const phone = document.getElementById('f-phone').value.trim();
   if (!name || !phone) {
-    tg?.showAlert('Заповніть ім\'я та телефон ☝️');
+    tg?.showAlert('Заповніть ім\'я та телефон');
     return;
   }
   const items = Object.entries(cart).map(([id,q]) => {
     const p = PRODUCTS.find(x => x.id === id);
-    return `${p.name} (${p.size}) — ${q} уп = ${q*p.price} грн`;
+    return p.name + ' (' + p.size + '), ' + q + ' уп = ' + (q*p.price) + ' грн';
   }).join('\n');
   const comment = document.getElementById('f-comment').value.trim();
-  const order = `🧤 НОВА ЗАЯВКА UNEX (Mini App)\n\n👤 ${name}\n📞 ${phone}\n\n📦 Замовлення:\n${items}\n\n💰 Разом: ${cartSum()} грн\n${comment ? '💬 ' + comment : ''}\n\n🆔 TG ID: ${tg?.initDataUnsafe?.user?.id || '—'} | @${tg?.initDataUnsafe?.user?.username || '—'}`;
-
-  // Отправка через бота (бот получает данные через /order)
+  const order = '🧤 НОВА ЗАЯВКА UNEX (Mini App)\n\n👤 ' + name + '\n📞 ' + phone + '\n\nЗамовлення:\n' + items + '\n\nРазом: ' + cartSum() + ' грн' + (comment ? '\nКоментар: ' + comment : '') + '\n\nTG ID: ' + (tg?.initDataUnsafe?.user?.id || '—') + ' | @' + (tg?.initDataUnsafe?.user?.username || '—');
   if (tg) {
     tg.sendData(JSON.stringify({type:'order', name, phone, comment, items:Object.entries(cart), total:cartSum()}));
   }
-  // Дополнительно — показываем экран успеха
   document.getElementById('success').classList.remove('hidden');
   document.querySelectorAll('.section').forEach(x => x.classList.add('hidden'));
-  document.querySelector('.cartbar').classList.add('hidden');
+  document.getElementById('cartbar').classList.add('hidden');
   document.querySelector('.tabs').classList.add('hidden');
   document.querySelector('.header').classList.add('hidden');
 }
 function resetApp() {
   cart = {};
   document.getElementById('success').classList.add('hidden');
-  document.querySelectorAll('.hidden-init').forEach(x => x.classList.remove('hidden'));
   document.querySelector('.tabs').classList.remove('hidden');
   document.querySelector('.header').classList.remove('hidden');
   renderCatalog(); updateCartbar();
 }
 
-// ===== External links =====
+// ===== Links =====
 function openLink(url) {
   if (tg) tg.openLink(url, { try_instant_view: false });
   else window.open(url, '_blank');
