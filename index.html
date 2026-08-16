@@ -97,6 +97,9 @@ body.dark .tab.active { color:var(--accent); }
 .card .flags { position:absolute; top:10px; left:10px; display:flex; gap:6px; }
 .flag { font-size:10px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; padding:4px 8px; border-radius:8px; }
 .flag.hit { background:#121212; color:#ffd000; }
+.flag.disc { background:#d14e0e; color:#fff; }
+.old-price { font-size:11px; font-weight:600; color:var(--text3); text-decoration:line-through; margin-left:6px; }
+body.dark .old-price { color:#8a8a8a; }
 .flag.stock { background:var(--accent-soft); color:var(--accent-strong); }
 .card .body { padding:12px; display:flex; flex-direction:column; flex:1; }
 .card .cat { font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); margin-bottom:4px; }
@@ -402,25 +405,44 @@ if (tg) {
 // ===== DATA: товар -> варіанти розмірів (ціни Prom.ua) =====
 const PRODUCTS = [
   {
-    id:'n4', cat:'Нітрил', name:'Нітрилові 4 г блакитні UNEX', hit:true,
+    id:'n4', cat:'Нітрил', name:'Нітрил голубий 4г', hit:true,
     desc:'Міцні медичні рукавички для стоматології, медичних центрів, лабораторій та HoReCa. Без латексу, без алергії, текстурована поверхня для надійного захоплення. Сертифіковано ISO 13485.',
     img:'img/nitril42.png', packImg:'',
-    variants:[{size:'M', price:225},{size:'L', price:190}]
+    variants:[
+      {size:'XS', price:190},
+      {size:'M', price:190},
+      {size:'L', price:190}
+    ]
   },
   {
-    id:'nc', cat:'Нітрил', name:'Нітрилові чорні UNEX',
+    id:'nc', cat:'Нітрил', name:'Нітрил чорний 3.6г',
     desc:'Чорні нітрилові рукавички для салонів краси, тату, автосервісів та промисловості. Стильний вигляд, висока міцність, без пудри. Не медичні, універсальні.',
     img:'img/nitril22.png', packImg:'',
-    variants:[{size:'M', price:275},{size:'XL', price:192}]
+    variants:[
+      {size:'S', price:220},
+      {size:'M', price:220},
+      {size:'L', price:220},
+      {size:'XL', price:220}
+    ]
+  },
+  {
+    id:'nc4', cat:'Нітрил', name:'Нітрил чорний 4г',
+    desc:'Чорні нітрилові рукавички 4г — підвищена міцність для салонів краси, тату, автосервісів та промисловості. Без пудри, стильний чорний колір, захист від хімії.',
+    img:'img/nitril22.png', packImg:'',
+    variants:[
+      {size:'S', price:230},
+      {size:'M', price:230},
+      {size:'L', price:230}
+    ]
   },
   {
     id:'lat', cat:'Латекс', name:'Латексні UNEX',
     desc:'Латексні рукавички високої якості. Висока чутливість та еластичність, ідеальні для хірургії та точних маніпуляцій. Упаковка 100 шт.',
     img:'img/lateks22.png', packImg:'',
     variants:[
-      {size:'S', price:115},
-      {size:'M', price:200},
-      {size:'L', price:240}
+      {size:'S', price:180},
+      {size:'M', price:180},
+      {size:'L', price:180}
     ]
   },
   {
@@ -430,10 +452,10 @@ const PRODUCTS = [
     variants:[{size:'L', price:125}]
   },
   {
-    id:'tpe', cat:'TPE', name:'TPE для HoReCa',
+    id:'tpe', cat:'TPE', name:'TPE для HoReCa', discount:true,
     desc:'Термопластичні еластомерні рукавички, ідеальні для харчової промисловості та HoReCa. Без запаху, без латексу, приємні на дотик.',
     img:'img/vinil22.png', packImg:'',
-    variants:[{size:'M', price:145}]
+    variants:[{size:'M', price:180, oldPrice:230}]
   },
   {
     id:'mask', cat:'Маски', name:'Маски медичні чорні',
@@ -466,12 +488,16 @@ function renderCatalog() {
     const min = Math.min(...prices);
     const max = Math.max(...prices);
     const priceStr = min === max ? min + ' <small>грн</small>' : min + '–' + max + ' <small>грн</small>';
+    const oldMin = Math.min(...p.variants.map(v => v.oldPrice || Infinity));
+    const hasOld = isFinite(oldMin) && oldMin > min;
+    const oldStr = hasOld ? `<span class="old-price">${oldMin} грн</span>` : '';
     const sizesStr = p.variants.map(v => v.size.replace(/\([^)]*\)/,'').trim()).join(', ');
     return `<div class="card" onclick="openSheet('${p.id}')">
       <div class="media">
         <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.style.visibility='hidden'">
         <div class="flags">
           ${p.hit ? '<span class="flag hit">Хіт</span>' : ''}
+          ${p.discount ? '<span class="flag disc">Знижка</span>' : ''}
           <span class="flag stock">В наявності</span>
         </div>
       </div>
@@ -480,7 +506,7 @@ function renderCatalog() {
         <h3>${p.name}</h3>
         <div class="sizes">Розміри: ${sizesStr}</div>
         <div class="bottom">
-          <div class="price">${priceStr}</div>
+          <div class="price">${priceStr} ${oldStr}</div>
         </div>
       </div>
     </div>`;
@@ -512,7 +538,7 @@ function renderSheet() {
   document.getElementById('sheet-title').textContent = p.name;
   document.getElementById('sheet-desc').textContent = p.desc;
   document.getElementById('sheet-sizes').innerHTML = p.variants.map(v =>
-    `<div class="size-pick ${v.size === sheetSize ? 'active' : ''}" onclick="sheetPickSize('${v.size}')">${v.size}<span class="pr">${v.price} грн</span></div>`
+    `<div class="size-pick ${v.size === sheetSize ? 'active' : ''}" onclick="sheetPickSize('${v.size}')">${v.size}<span class="pr">${v.price} грн${v.oldPrice ? ` <s>${v.oldPrice}</s>` : ''}</span></div>`
   ).join('');
   document.getElementById('sheet-qty').value = sheetQtyVal;
   updateSheetTotal();
