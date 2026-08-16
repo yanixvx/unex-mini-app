@@ -5,9 +5,7 @@ on:
     - cron: '*/1 * * * *'
   workflow_dispatch:
 
-permissions:
-  contents: read
-  actions: write
+permissions: write-all
 
 jobs:
   bot:
