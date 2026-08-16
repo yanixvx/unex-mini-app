@@ -671,6 +671,27 @@ function calcTypeChanged() {
   }
   document.getElementById('calc-add-btn').classList.add('hidden');
 }
+
+// Распределяет расчётное число упаковок по позициям набора (пропорционально вагам n).
+// Сумма позиций ВСЕГДА равна total — набор и расчёт связаны.
+function calcPackBreakdown(type, total) {
+  const c = CALC[type];
+  const sumW = c.pack.reduce((s, p) => s + p.n, 0);
+  const out = [];
+  let allocated = 0;
+  c.pack.forEach((p, i) => {
+    let qty;
+    if (i === c.pack.length - 1) {
+      qty = total - allocated;           // последний забирает остаток
+    } else {
+      qty = Math.floor(total * p.n / sumW);
+    }
+    allocated += qty;
+    out.push({ id: p.id, size: p.size, qty: Math.max(1, qty) });
+  });
+  return out;
+}
+
 function runCalc() {
   const type = document.getElementById('calc-type').value;
   const days = parseInt(document.getElementById('calc-days').value) || 22;
@@ -690,9 +711,9 @@ function runCalc() {
   document.getElementById('calc-result').classList.remove('hidden');
   document.getElementById('calc-num').textContent = '≈ ' + total + ' уп / міс';
   document.getElementById('calc-text').textContent = detail + ' (' + total + ' уп по 100 шт). Точний розрахунок підкаже менеджер.';
-  const pack = c.pack.map(p => {
+  const pack = calcPackBreakdown(type, total).map(p => {
     const prod = PRODUCTS.find(x => x.id === p.id);
-    return prod.name + ' (' + p.size + ') × ' + (p.n * Math.max(1, Math.ceil(total/10)));
+    return prod.name + ' (' + p.size + ') × ' + p.qty;
   }).join('\n');
   document.getElementById('calc-pack').textContent = pack;
   document.getElementById('calc-add-btn').dataset.type = type;
@@ -701,13 +722,15 @@ function runCalc() {
 function addCalcPack() {
   const type = document.getElementById('calc-add-btn').dataset.type || 'dent';
   const total = parseInt(document.getElementById('calc-num').textContent.replace(/\D/g,'')) || 10;
-  const mult = Math.max(1, Math.ceil(total/10));
-  CALC[type].pack.forEach(p => {
+  const pack = calcPackBreakdown(type, total);
+  let added = 0;
+  pack.forEach(p => {
     const key = p.id + '|' + p.size;
-    cart[key] = (cart[key] || 0) + p.n * mult;
+    cart[key] = (cart[key] || 0) + p.qty;
+    added += p.qty;
   });
   renderCatalog(); updateCartbar();
-  toast('Набір додано у заявку');
+  toast('Додано набір: ' + added + ' уп');
 }
 
 // ===== Submit =====
