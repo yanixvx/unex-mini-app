@@ -19,17 +19,17 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Ensure offset variable
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh api /repos/${{ github.repository }}/actions/variables/UNEX_LAST_UPDATE --jq .name 2>/dev/null || \
-          gh api -X POST /repos/${{ github.repository }}/actions/variables \
-            -f name=UNEX_LAST_UPDATE -f value=0
+      - name: Restore offset cache
+        id: cache-offset
+        uses: actions/cache@v4
+        with:
+          path: /tmp/unex_offset.txt
+          key: unex-offset-${{ github.run_id }}
+          restore-keys: |
+            unex-offset-
 
       - name: Run bot
         env:
           UNEX_BOT_TOKEN: ${{ secrets.UNEX_BOT_TOKEN }}
           UNEX_OWNER_ID: ${{ secrets.UNEX_OWNER_ID }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python bot_action.py

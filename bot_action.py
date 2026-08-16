@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """UNEX Medical bot — одноразовый обработчик для GitHub Actions.
-Запускается каждую минуту, обрабатывает /start и заявки из мини-аппа.
-Offset хранится в переменной репозитория UNEX_LAST_UPDATE.
+Обрабатывает /start (приветствие с кнопкой) и заявки из мини-аппа.
+Offset хранится в /tmp/unex_offset.txt (кэш Actions) + фильтр по времени 5 минут.
 """
-import json, os, subprocess, urllib.request, urllib.parse
+import json, os, time, urllib.request, urllib.parse
 
 BOT_TOKEN = os.environ.get("UNEX_BOT_TOKEN", "")
 OWNER_ID = os.environ.get("UNEX_OWNER_ID", "780868306")
 APP_URL = "https://yanixvx.github.io/unex-mini-app/"
 API = f"https://api.telegram.org/bot{BOT_TOKEN}"
-REPO = os.environ.get("GITHUB_REPOSITORY", "")
+OFFSET_FILE = "/tmp/unex_offset.txt"
 
 def tg(method, **params):
     url = f"{API}/{method}"
@@ -23,26 +23,17 @@ def tg(method, **params):
         return {"ok": False}
 
 def get_last_offset():
-    if not REPO:
-        return None
     try:
-        r = subprocess.run(
-            ["gh", "api", f"/repos/{REPO}/actions/variables/UNEX_LAST_UPDATE", "--jq", ".value"],
-            capture_output=True, text=True, timeout=20)
-        if r.returncode == 0 and r.stdout.strip().isdigit():
-            return int(r.stdout.strip())
-    except Exception as e:
-        print(f"read offset error: {e}")
-    return None
+        with open(OFFSET_FILE) as f:
+            v = int(f.read().strip())
+            return v
+    except Exception:
+        return None
 
 def save_offset(off):
-    if not REPO:
-        return
     try:
-        subprocess.run(
-            ["gh", "api", "-X", "PATCH", f"/repos/{REPO}/actions/variables/UNEX_LAST_UPDATE",
-             "-f", f"value={off}"],
-            capture_output=True, text=True, timeout=20)
+        with open(OFFSET_FILE, "w") as f:
+            f.write(str(off))
         print(f"offset saved: {off}")
     except Exception as e:
         print(f"save offset error: {e}")
@@ -56,10 +47,6 @@ def welcome_kb():
 def main():
     if not BOT_TOKEN:
         print("NO TOKEN")
-        return
-    me = tg("getMe")
-    if not me.get("ok"):
-        print("bot token invalid")
         return
 
     offset = get_last_offset()
@@ -79,10 +66,20 @@ def main():
         print("no updates")
         return
 
-    last_id = updates[-1]["update_id"]
+    # Фильтр: только свежие (моложе 5 минут) — защита от дублей при потере кэша
+    now = int(time.time())
+    fresh = [u for u in updates if (u.get("message") or {}).get("date", 0) >= now - 300]
+    if not fresh:
+        # подтверждаем offset, чтобы старые не висели
+        last_id = updates[-1]["update_id"]
+        save_offset(last_id + 1)
+        print(f"только старые updates ({len(updates)}), offset -> {last_id + 1}")
+        return
+
+    last_id = fresh[-1]["update_id"]
     handled = 0
 
-    for u in updates:
+    for u in fresh:
         msg = u.get("message") or {}
         text = (msg.get("text") or "").strip()
         user = msg.get("from") or {}
@@ -90,7 +87,6 @@ def main():
         if not chat_id:
             continue
 
-        # /start и /help — приветствие с кнопкой каталога
         if text in ("/start", "/help", "Старт", "Каталог"):
             tg("sendMessage",
                chat_id=chat_id,
@@ -106,7 +102,6 @@ def main():
             print(f"start от {user.get('id')}")
             continue
 
-        # Заявка из мини-аппа (web_app_data)
         wa = msg.get("web_app_data")
         if wa and wa.get("data"):
             try:
@@ -149,7 +144,6 @@ def main():
             print(f"заявка от {user.get('id')}, total={total}")
             continue
 
-        # Любое другое сообщение — кнопка каталога
         tg("sendMessage",
            chat_id=chat_id,
            text="👋 Напишіть менеджеру: @UnexMedicalProducts\n\nАбо відкрийте каталог і замовте прямо тут 👇",
