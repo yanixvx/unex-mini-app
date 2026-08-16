@@ -301,7 +301,7 @@ body.dark .tab.active { color:var(--accent); }
       <textarea id="f-comment" rows="2" placeholder="Потрібно до п'ятниці, доставка Нова Пошта"></textarea>
     </div>
     <button class="btn-primary" onclick="submitOrder()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg>Надіслати заявку</button>
-    <p class="note">Заявка надходить менеджеру UNEX. Передзвонимо протягом 15 хвилин у робочий час (Пн–Сб 9:00–19:00).</p>
+    <p class="note">Після натискання відкриється Telegram з готовим текстом заявки — натисніть «Надіслати», і менеджер отримає її миттєво. Передзвонимо протягом 15 хвилин (Пн–Сб 9:00–19:00).</p>
   </div>
   <div class="empty hidden" id="cart-empty">
     <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg></div>
@@ -748,10 +748,22 @@ function submitOrder() {
     return p.name + ' (' + size + '), ' + q + ' уп = ' + (q*v.price) + ' грн';
   }).join('\n');
   const comment = document.getElementById('f-comment').value.trim();
-  const order = '🧤 НОВА ЗАЯВКА UNEX (Mini App)\n\n👤 ' + name + '\n📞 ' + phone + '\n\nЗамовлення:\n' + items + '\n\nРазом: ' + cartSum() + ' грн' + (comment ? '\nКоментар: ' + comment : '') + '\n\nTG ID: ' + (tg?.initDataUnsafe?.user?.id || '—') + ' | @' + (tg?.initDataUnsafe?.user?.username || '—');
-  if (tg) {
-    tg.sendData(JSON.stringify({type:'order', name, phone, comment, items:Object.entries(cart), total:cartSum()}));
-  }
+
+  // Текст заявки — отправится менеджеру @UNEX_UA через Telegram deep link
+  let text = '🧤 НОВА ЗАЯВКА UNEX (каталог)\n\n';
+  text += '👤 ' + name + '\n';
+  text += '📞 ' + phone + '\n\n';
+  text += '📦 Замовлення:\n' + items + '\n\n';
+  text += '💰 Разом: ' + cartSum() + ' грн\n';
+  if (comment) text += '💬 ' + comment + '\n';
+  const uname = (tg?.initDataUnsafe?.user?.username) ? '@' + tg.initDataUnsafe.user.username : (tg?.initDataUnsafe?.user?.id || '—');
+  text += '🆔 Клієнт: ' + uname;
+
+  const url = 'https://t.me/UNEX_UA?text=' + encodeURIComponent(text);
+  if (tg) tg.openTelegramLink(url);
+  else window.open(url, '_blank');
+
+  // Показываем экран успеха
   document.getElementById('success').classList.remove('hidden');
   document.querySelectorAll('.section').forEach(x => x.classList.add('hidden'));
   document.getElementById('cartbar').classList.add('hidden');
