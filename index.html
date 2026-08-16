@@ -258,12 +258,12 @@ body.dark .tab.active { color:var(--accent); }
         <option value="prod">Виробництво / цех</option>
       </select>
     </div>
-    <div class="field">
+    <div class="field" id="calc-amount-field">
       <label id="calc-label" for="calc-amount">Кількість стоматологічних крісел</label>
       <input type="number" id="calc-amount" min="1" max="200" value="2">
     </div>
-    <div class="field">
-      <label for="calc-clients">Клієнтів на день (на одне місце)</label>
+    <div class="field" id="calc-clients-field">
+      <label for="calc-clients">Клієнтів на день</label>
       <input type="number" id="calc-clients" min="1" max="500" value="10">
     </div>
     <div class="field">
@@ -635,36 +635,64 @@ function cartChg(key, d) {
 function delItem(key) { delete cart[key]; renderCatalog(); updateCartbar(); renderCart(); }
 
 // ===== Calculator =====
-// per: перчаток на 1 клієнта; clients: типове число клієнтів/день на місце
+// mode 'clients': витрата на прийом/клієнта → лічимо клієнтів на день (місця не потрібні)
+// mode 'workers': витрата на працівника за зміну → лічимо працівників і перчаток/зміна
 const CALC = {
-  dent:   {label:'Кількість стоматологічних крісел', per:6, clients:12, pack:[{id:'n4',size:'M',n:2},{id:'n4',size:'L',n:1}]},
-  clinic: {label:'Кількість кабінетів', per:2, clients:20, pack:[{id:'n4',size:'M',n:2}]},
-  beauty: {label:'Кількість майстрів', per:2, clients:8, pack:[{id:'nc',size:'M',n:2}]},
-  horeca: {label:'Кількість точок або кухарів', per:1, clients:50, pack:[{id:'vin',size:'L',n:2},{id:'tpe',size:'M',n:1}]},
-  vet:    {label:'Кількість лікарів / кабінетів', per:4, clients:15, pack:[{id:'n4',size:'M',n:2},{id:'lat',size:'M',n:1}]},
-  lab:    {label:'Кількість співробітників', per:3, clients:15, pack:[{id:'lat',size:'S',n:2},{id:'n4',size:'L',n:1}]},
-  auto:   {label:'Кількість майстрів', per:2, clients:10, pack:[{id:'nc',size:'M',n:2}]},
-  prod:   {label:'Кількість робочих місць', per:2, clients:10, pack:[{id:'vin',size:'L',n:2},{id:'lat',size:'M',n:1}]},
+  dent:   {mode:'clients', label:'Клієнтів (пацієнтів) на день', per:6, clients:15, pack:[{id:'n4',size:'M',n:2},{id:'n4',size:'L',n:1}]},
+  clinic: {mode:'clients', label:'Клієнтів (пацієнтів) на день', per:2, clients:25, pack:[{id:'n4',size:'M',n:2}]},
+  beauty: {mode:'clients', label:'Клієнтів на день', per:2, clients:10, pack:[{id:'nc',size:'M',n:2}]},
+  vet:    {mode:'clients', label:'Клієнтів (тварин) на день', per:4, clients:12, pack:[{id:'n4',size:'M',n:2},{id:'lat',size:'M',n:1}]},
+  horeca: {mode:'workers', label:'Кількість працівників', per:5, clients:5, pack:[{id:'vin',size:'L',n:2},{id:'tpe',size:'M',n:1}]},
+  lab:    {mode:'workers', label:'Кількість співробітників', per:8, clients:6, pack:[{id:'lat',size:'S',n:2},{id:'n4',size:'L',n:1}]},
+  auto:   {mode:'workers', label:'Кількість майстрів', per:6, clients:4, pack:[{id:'nc',size:'M',n:2}]},
+  prod:   {mode:'workers', label:'Кількість працівників', per:6, clients:8, pack:[{id:'vin',size:'L',n:2},{id:'lat',size:'M',n:1}]},
 };
 function calcTypeChanged() {
   const c = CALC[document.getElementById('calc-type').value];
-  document.getElementById('calc-label').textContent = c.label;
-  document.getElementById('calc-clients').value = c.clients;
+  const amountField = document.getElementById('calc-amount-field');
+  const clientsField = document.getElementById('calc-clients-field');
+  const amountInput = document.getElementById('calc-amount');
+  const clientsInput = document.getElementById('calc-clients');
+  const amountLabel = document.getElementById('calc-label');
+  const clientsLabel = clientsField.querySelector('label');
+
+  if (c.mode === 'clients') {
+    amountField.classList.add('hidden');
+    clientsField.classList.remove('hidden');
+    clientsLabel.textContent = c.label;
+    clientsInput.value = c.clients;
+  } else {
+    amountField.classList.remove('hidden');
+    amountLabel.textContent = c.label;
+    amountInput.value = c.clients;
+    clientsField.classList.remove('hidden');
+    clientsLabel.textContent = 'Рукавичок на працівника за зміну';
+    clientsInput.value = c.per;
+  }
   document.getElementById('calc-add-btn').classList.add('hidden');
 }
 function runCalc() {
   const type = document.getElementById('calc-type').value;
-  const amount = parseInt(document.getElementById('calc-amount').value) || 1;
-  const clients = parseInt(document.getElementById('calc-clients').value) || 1;
   const days = parseInt(document.getElementById('calc-days').value) || 22;
   const c = CALC[type];
-  const total = Math.ceil(amount * clients * c.per * days / 100);
+  let total;
+  let detail;
+  if (c.mode === 'clients') {
+    const clients = parseInt(document.getElementById('calc-clients').value) || 1;
+    total = Math.ceil(clients * c.per * days / 100);
+    detail = clients + ' клієнтів/день × ' + c.per + ' рукавичок × ' + days + ' днів = ' + (clients*c.per*days) + ' шт';
+  } else {
+    const workers = parseInt(document.getElementById('calc-amount').value) || 1;
+    const perDay = parseInt(document.getElementById('calc-clients').value) || 1;
+    total = Math.ceil(workers * perDay * days / 100);
+    detail = workers + ' працівників × ' + perDay + ' рукавичок/зміна × ' + days + ' днів = ' + (workers*perDay*days) + ' шт';
+  }
   document.getElementById('calc-result').classList.remove('hidden');
   document.getElementById('calc-num').textContent = '≈ ' + total + ' уп / міс';
-  document.getElementById('calc-text').textContent = amount + ' місць × ' + clients + ' клієнтів/день × ' + c.per + ' рукавички × ' + days + ' днів = ' + (amount*clients*c.per*days) + ' шт (' + total + ' уп по 100 шт). Точний розрахунок підкаже менеджер.';
+  document.getElementById('calc-text').textContent = detail + ' (' + total + ' уп по 100 шт). Точний розрахунок підкаже менеджер.';
   const pack = c.pack.map(p => {
     const prod = PRODUCTS.find(x => x.id === p.id);
-    return prod.name + ' (' + p.size + ') × ' + (p.n * Math.max(1, Math.ceil(amount/2)));
+    return prod.name + ' (' + p.size + ') × ' + (p.n * Math.max(1, Math.ceil(total/10)));
   }).join('\n');
   document.getElementById('calc-pack').textContent = pack;
   document.getElementById('calc-add-btn').dataset.type = type;
@@ -672,8 +700,8 @@ function runCalc() {
 }
 function addCalcPack() {
   const type = document.getElementById('calc-add-btn').dataset.type || 'dent';
-  const amount = parseInt(document.getElementById('calc-amount').value) || 1;
-  const mult = Math.max(1, Math.ceil(amount/2));
+  const total = parseInt(document.getElementById('calc-num').textContent.replace(/\D/g,'')) || 10;
+  const mult = Math.max(1, Math.ceil(total/10));
   CALC[type].pack.forEach(p => {
     const key = p.id + '|' + p.size;
     cart[key] = (cart[key] || 0) + p.n * mult;
