@@ -114,10 +114,6 @@ body.dark .tab.active { color:var(--accent); }
 .sheet .grip { padding:0 20px; }
 .sheet .hero-img { background:var(--bg2); border-radius:18px; margin:14px 20px 0; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; overflow:hidden; }
 .sheet .hero-img img { max-width:100%; max-height:100%; object-fit:contain; }
-.sheet .thumb-row { display:flex; gap:10px; margin:12px 20px 0; }
-.sheet .thumb { width:64px; height:64px; border-radius:12px; background:var(--bg2); border:2px solid transparent; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
-.sheet .thumb.active { border-color:var(--accent); }
-.sheet .thumb img { max-width:90%; max-height:90%; object-fit:contain; }
 .sheet .title { font-size:19px; font-weight:800; letter-spacing:-.02em; margin:16px 0 4px; }
 .sheet .cat-line { font-size:11px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; color:var(--accent); margin-top:14px; }
 .sheet .desc { font-size:13.5px; color:var(--text2); line-height:1.6; margin:8px 0 14px; }
@@ -251,7 +247,7 @@ body.dark .tab.active { color:var(--accent); }
     <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h.01M12 19h.01"/></svg>Скільки рукавичок потрібно?</h3>
     <div class="field">
       <label for="calc-type">Тип закладу</label>
-      <select id="calc-type">
+      <select id="calc-type" onchange="calcTypeChanged()">
         <option value="dent">Стоматологія</option>
         <option value="clinic">Медцентр / клініка</option>
         <option value="beauty">Салон краси / тату</option>
@@ -265,6 +261,10 @@ body.dark .tab.active { color:var(--accent); }
     <div class="field">
       <label id="calc-label" for="calc-amount">Кількість стоматологічних крісел</label>
       <input type="number" id="calc-amount" min="1" max="200" value="2">
+    </div>
+    <div class="field">
+      <label for="calc-clients">Клієнтів на день (на одне місце)</label>
+      <input type="number" id="calc-clients" min="1" max="500" value="10">
     </div>
     <div class="field">
       <label for="calc-days">Робочих днів на місяць</label>
@@ -354,7 +354,6 @@ body.dark .tab.active { color:var(--accent); }
 <div id="product-sheet" class="sheet hidden">
   <div class="handle"></div>
   <div class="hero-img" id="sheet-img"></div>
-  <div class="thumb-row" id="sheet-thumbs"></div>
   <div class="grip">
     <div class="cat-line" id="sheet-cat"></div>
     <div class="title" id="sheet-title"></div>
@@ -405,48 +404,41 @@ const PRODUCTS = [
   {
     id:'n4', cat:'Нітрил', name:'Нітрилові 4 г блакитні UNEX', hit:true,
     desc:'Міцні медичні рукавички для стоматології, медичних центрів, лабораторій та HoReCa. Без латексу, без алергії, текстурована поверхня для надійного захоплення. Сертифіковано ISO 13485.',
-    img:'img/nitril42.png', packImg:'img/upakovka2.png',
+    img:'img/nitril42.png', packImg:'',
     variants:[{size:'M', price:225},{size:'L', price:190}]
   },
   {
     id:'nc', cat:'Нітрил', name:'Нітрилові чорні UNEX',
     desc:'Чорні нітрилові рукавички для салонів краси, тату, автосервісів та промисловості. Стильний вигляд, висока міцність, без пудри. Не медичні, універсальні.',
-    img:'img/nitril22.png', packImg:'img/upakovka2.png',
+    img:'img/nitril22.png', packImg:'',
     variants:[{size:'M', price:275},{size:'XL', price:192}]
   },
   {
-    id:'nat', cat:'Нітрил', name:'Нітрил натуральний', 
-    desc:'Нітрилові рукавички натурального кольору в асортименті розмірів. Висока еластичність та міцність, підходять для медицини та промисловості.',
-    img:'img/nitril22.png', packImg:'img/upakovka2.png',
-    variants:[{size:'ХС–ХЛ', price:245}]
-  },
-  {
     id:'lat', cat:'Латекс', name:'Латексні UNEX',
-    desc:'Латексні рукавички різних типів: неопудрені, з мікропудрою та припудрені. Висока чутливість та еластичність, ідеальні для хірургії та точних маніпуляцій.',
-    img:'img/lateks22.png', packImg:'img/upakovka2.png',
+    desc:'Латексні рукавички високої якості. Висока чутливість та еластичність, ідеальні для хірургії та точних маніпуляцій. Упаковка 100 шт.',
+    img:'img/lateks22.png', packImg:'',
     variants:[
-      {size:'S (неопудр.)', price:115},
-      {size:'M (мікропудра)', price:198},
-      {size:'M (припудр.)', price:200},
-      {size:'білий (пудра)', price:230}
+      {size:'S', price:115},
+      {size:'M', price:200},
+      {size:'L', price:240}
     ]
   },
   {
     id:'vin', cat:'Вініл', name:'Вінілові UNEX',
     desc:'Бюджетні вінілові рукавички для HoReCa, прибирання, харчової промисловості та побуту. Висока щільність, комфорт при довгому носінні.',
-    img:'img/vinil22.png', packImg:'img/upakovka2.png',
+    img:'img/vinil22.png', packImg:'',
     variants:[{size:'L', price:125}]
   },
   {
     id:'tpe', cat:'TPE', name:'TPE для HoReCa',
     desc:'Термопластичні еластомерні рукавички, ідеальні для харчової промисловості та HoReCa. Без запаху, без латексу, приємні на дотик.',
-    img:'img/vinil22.png', packImg:'img/upakovka2.png',
+    img:'img/vinil22.png', packImg:'',
     variants:[{size:'M', price:145}]
   },
   {
     id:'mask', cat:'Маски', name:'Маски медичні чорні',
     desc:'Тришарові захисні маски чорного кольору. Щільна посадка, комфортне дихання, фільтрація 3 шари. Упаковка 50 шт.',
-    img:'img/maska2.png', packImg:'img/upakovka2.png',
+    img:'img/maska2.png', packImg:'',
     variants:[{size:'50 шт/кор', price:120}]
   },
 ];
@@ -516,9 +508,6 @@ function renderSheet() {
   const p = sheetProduct;
   if (!p) return;
   document.getElementById('sheet-img').innerHTML = `<img src="${p.img}" alt="${p.name}">`;
-  document.getElementById('sheet-thumbs').innerHTML =
-    `<div class="thumb active" onclick="sheetImg('${p.img}')"><img src="${p.img}"></div>` +
-    (p.packImg ? `<div class="thumb" onclick="sheetImg('${p.packImg}')"><img src="${p.packImg}"></div>` : '');
   document.getElementById('sheet-cat').textContent = p.cat;
   document.getElementById('sheet-title').textContent = p.name;
   document.getElementById('sheet-desc').textContent = p.desc;
@@ -527,11 +516,6 @@ function renderSheet() {
   ).join('');
   document.getElementById('sheet-qty').value = sheetQtyVal;
   updateSheetTotal();
-}
-function sheetImg(src) {
-  document.getElementById('sheet-img').innerHTML = `<img src="${src}" alt="">`;
-  document.querySelectorAll('#sheet-thumbs .thumb').forEach(t => t.classList.remove('active'));
-  event.currentTarget.classList.add('active');
 }
 function sheetPickSize(s) {
   sheetSize = s;
@@ -651,26 +635,33 @@ function cartChg(key, d) {
 function delItem(key) { delete cart[key]; renderCatalog(); updateCartbar(); renderCart(); }
 
 // ===== Calculator =====
+// per: перчаток на 1 клієнта; clients: типове число клієнтів/день на місце
 const CALC = {
-  dent:   {label:'Кількість стоматологічних крісел', per:60, pack:[{id:'n4',size:'M',n:2},{id:'n4',size:'L',n:1}]},
-  clinic: {label:'Кількість кабінетів', per:40, pack:[{id:'n4',size:'M',n:2}]},
-  beauty: {label:'Кількість майстрів', per:15, pack:[{id:'nc',size:'M',n:1},{id:'nat',size:'ХС–ХЛ',n:1}]},
-  horeca: {label:'Кількість точок або кухарів', per:25, pack:[{id:'vin',size:'L',n:2},{id:'tpe',size:'M',n:1}]},
-  vet:    {label:'Кількість лікарів / кабінетів', per:35, pack:[{id:'n4',size:'M',n:2},{id:'lat',size:'M (мікропудра)',n:1}]},
-  lab:    {label:'Кількість співробітників', per:30, pack:[{id:'lat',size:'S (неопудр.)',n:2},{id:'n4',size:'L',n:1}]},
-  auto:   {label:'Кількість майстрів', per:20, pack:[{id:'nc',size:'M',n:2},{id:'nat',size:'ХС–ХЛ',n:1}]},
-  prod:   {label:'Кількість робочих місць', per:25, pack:[{id:'vin',size:'L',n:2},{id:'lat',size:'M (припудр.)',n:1}]},
+  dent:   {label:'Кількість стоматологічних крісел', per:6, clients:12, pack:[{id:'n4',size:'M',n:2},{id:'n4',size:'L',n:1}]},
+  clinic: {label:'Кількість кабінетів', per:2, clients:20, pack:[{id:'n4',size:'M',n:2}]},
+  beauty: {label:'Кількість майстрів', per:2, clients:8, pack:[{id:'nc',size:'M',n:2}]},
+  horeca: {label:'Кількість точок або кухарів', per:1, clients:50, pack:[{id:'vin',size:'L',n:2},{id:'tpe',size:'M',n:1}]},
+  vet:    {label:'Кількість лікарів / кабінетів', per:4, clients:15, pack:[{id:'n4',size:'M',n:2},{id:'lat',size:'M',n:1}]},
+  lab:    {label:'Кількість співробітників', per:3, clients:15, pack:[{id:'lat',size:'S',n:2},{id:'n4',size:'L',n:1}]},
+  auto:   {label:'Кількість майстрів', per:2, clients:10, pack:[{id:'nc',size:'M',n:2}]},
+  prod:   {label:'Кількість робочих місць', per:2, clients:10, pack:[{id:'vin',size:'L',n:2},{id:'lat',size:'M',n:1}]},
 };
+function calcTypeChanged() {
+  const c = CALC[document.getElementById('calc-type').value];
+  document.getElementById('calc-label').textContent = c.label;
+  document.getElementById('calc-clients').value = c.clients;
+  document.getElementById('calc-add-btn').classList.add('hidden');
+}
 function runCalc() {
   const type = document.getElementById('calc-type').value;
   const amount = parseInt(document.getElementById('calc-amount').value) || 1;
+  const clients = parseInt(document.getElementById('calc-clients').value) || 1;
   const days = parseInt(document.getElementById('calc-days').value) || 22;
   const c = CALC[type];
-  document.getElementById('calc-label').textContent = c.label;
-  const total = Math.ceil(amount * c.per * days / 100);
+  const total = Math.ceil(amount * clients * c.per * days / 100);
   document.getElementById('calc-result').classList.remove('hidden');
   document.getElementById('calc-num').textContent = '≈ ' + total + ' уп / міс';
-  document.getElementById('calc-text').textContent = '≈ ' + (total*100) + ' рукавичок (100 шт в упаковці). Точний розрахунок залежить від інтенсивності, менеджер підкаже.';
+  document.getElementById('calc-text').textContent = amount + ' місць × ' + clients + ' клієнтів/день × ' + c.per + ' рукавички × ' + days + ' днів = ' + (amount*clients*c.per*days) + ' шт (' + total + ' уп по 100 шт). Точний розрахунок підкаже менеджер.';
   const pack = c.pack.map(p => {
     const prod = PRODUCTS.find(x => x.id === p.id);
     return prod.name + ' (' + p.size + ') × ' + (p.n * Math.max(1, Math.ceil(amount/2)));
