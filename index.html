@@ -412,7 +412,7 @@ const PRODUCTS = [
   {
     id:'n4', cat:'Нітрил', name:'Нітрил голубий 4г', hit:true,
     desc:'Міцні медичні рукавички для стоматології, медичних центрів, лабораторій та HoReCa. Без латексу, без алергії, текстурована поверхня для надійного захоплення. Сертифіковано ISO 13485.',
-    img:'img/nitril42.png', packImg:'',
+    img:'img/nitril42.png', packImg:'', pack:100,
     variants:[
       {size:'XS', tiers:[{min:1,price:180},{min:10,price:165},{min:100,price:150},{min:1000,price:140}]},
       {size:'M',  tiers:[{min:1,price:180},{min:10,price:165},{min:100,price:150},{min:1000,price:140}]},
@@ -422,7 +422,7 @@ const PRODUCTS = [
   {
     id:'nc', cat:'Нітрил', name:'Нітрил чорний 3.6г',
     desc:'Чорні нітрилові рукавички для салонів краси, тату, автосервісів та промисловості. Стильний вигляд, висока міцність, без пудри. Не медичні, універсальні.',
-    img:'img/nitril22.png', packImg:'',
+    img:'img/nitril22.png', packImg:'', pack:100,
     variants:[
       {size:'S',  tiers:[{min:1,price:195},{min:10,price:180},{min:100,price:160},{min:1000,price:145}]},
       {size:'M',  tiers:[{min:1,price:195},{min:10,price:180},{min:100,price:160},{min:1000,price:145}]},
@@ -433,7 +433,7 @@ const PRODUCTS = [
   {
     id:'nc4', cat:'Нітрил', name:'Нітрил чорний 4г',
     desc:'Чорні нітрилові рукавички 4г — підвищена міцність для салонів краси, тату, автосервісів та промисловості. Без пудри, стильний чорний колір, захист від хімії.',
-    img:'img/nitril22.png', packImg:'',
+    img:'img/nitril22.png', packImg:'', pack:100,
     variants:[
       {size:'S', tiers:[{min:1,price:200},{min:10,price:185},{min:100,price:165},{min:1000,price:150}]},
       {size:'M', tiers:[{min:1,price:200},{min:10,price:185},{min:100,price:165},{min:1000,price:150}]}
@@ -442,7 +442,7 @@ const PRODUCTS = [
   {
     id:'lat', cat:'Латекс', name:'Латексні UNEX',
     desc:'Латексні рукавички високої якості. Висока чутливість та еластичність, ідеальні для хірургії та точних маніпуляцій. Упаковка 100 шт.',
-    img:'img/lateks22.png', packImg:'',
+    img:'img/lateks22.png', packImg:'', pack:100,
     variants:[
       {size:'S', tiers:[{min:1,price:180},{min:10,price:160},{min:100,price:140},{min:1000,price:130}]},
       {size:'M', tiers:[{min:1,price:180},{min:10,price:160},{min:100,price:140},{min:1000,price:130}]}
@@ -451,7 +451,7 @@ const PRODUCTS = [
   {
     id:'vin', cat:'Вініл', name:'Вінілові UNEX',
     desc:'Бюджетні вінілові рукавички для HoReCa, прибирання, харчової промисловості та побуту. Висока щільність, комфорт при довгому носінні.',
-    img:'img/vinil22.png', packImg:'',
+    img:'img/vinil22.png', packImg:'', pack:100,
     variants:[
       {size:'S', tiers:[{min:1,price:150},{min:10,price:140},{min:100,price:125},{min:1000,price:118}]},
       {size:'M', tiers:[{min:1,price:150},{min:10,price:140},{min:100,price:125},{min:1000,price:118}]},
@@ -461,7 +461,7 @@ const PRODUCTS = [
   {
     id:'tpe', cat:'TPE', name:'TPE для HoReCa', discount:true,
     desc:'Термопластичні еластомерні рукавички, ідеальні для харчової промисловості та HoReCa. Без запаху, без латексу, приємні на дотик.',
-    img:'img/vinil22.png', packImg:'',
+    img:'img/vinil22.png', packImg:'', pack:200,
     variants:[
       {size:'M', tiers:[{min:1,price:180},{min:10,price:175},{min:100,price:165},{min:1000,price:125}]},
       {size:'L', tiers:[{min:1,price:180},{min:10,price:175},{min:100,price:165},{min:1000,price:125}]}
@@ -470,7 +470,7 @@ const PRODUCTS = [
   {
     id:'mask', cat:'Маски', name:'Маски медичні чорні',
     desc:'Тришарові захисні маски чорного кольору. Щільна посадка, комфортне дихання, фільтрація 3 шари. Упаковка 50 шт.',
-    img:'img/maska2.png', packImg:'',
+    img:'img/maska2.png', packImg:'', pack:50,
     variants:[
       {size:'50 шт/кор', tiers:[{min:1,price:60},{min:10,price:60},{min:100,price:55},{min:1000,price:50}]}
     ]
@@ -567,7 +567,7 @@ function renderSheet() {
   document.getElementById('sheet-img').innerHTML = `<img src="${p.img}" alt="${p.name}">`;
   document.getElementById('sheet-cat').textContent = p.cat;
   document.getElementById('sheet-title').textContent = p.name;
-  document.getElementById('sheet-desc').textContent = p.desc;
+  document.getElementById('sheet-desc').textContent = p.desc + (p.pack ? ` В упаковці ${p.pack} шт.` : '');
   document.getElementById('sheet-sizes').innerHTML = p.variants.map(v =>
     `<div class="size-pick ${v.size === sheetSize ? 'active' : ''}" onclick="sheetPickSize('${v.size}')">${v.size}</div>`
   ).join('');
