@@ -100,6 +100,10 @@ body.dark .tab.active { color:var(--accent); }
 .flag.disc { background:#d14e0e; color:#fff; }
 .old-price { font-size:11px; font-weight:600; color:var(--text3); text-decoration:line-through; margin-left:6px; }
 body.dark .old-price { color:#8a8a8a; }
+.tiers { font-size:11px; font-weight:600; color:var(--accent-strong); margin-top:4px; line-height:1.35; }
+.saved { font-size:11.5px; font-weight:700; color:#16a34a; margin-top:3px; }
+.next-tier { font-size:11.5px; font-weight:600; color:var(--text2); margin-top:3px; }
+body.dark .saved { color:#4ade80; }
 .flag.stock { background:var(--accent-soft); color:var(--accent-strong); }
 .card .body { padding:12px; display:flex; flex-direction:column; flex:1; }
 .card .cat { font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); margin-bottom:4px; }
@@ -402,16 +406,17 @@ if (tg) {
   tg.onEvent('mainButtonClicked', submitOrder);
 }
 
-// ===== DATA: товар -> варіанти розмірів (ціни Prom.ua) =====
+// ===== DATA: товар -> варіанти розмірів (ціни з прайсу UNEX, 08.2026) =====
+// tiers: скидочні рівні [{min: кількість уп, price: ціна за уп}]
 const PRODUCTS = [
   {
     id:'n4', cat:'Нітрил', name:'Нітрил голубий 4г', hit:true,
     desc:'Міцні медичні рукавички для стоматології, медичних центрів, лабораторій та HoReCa. Без латексу, без алергії, текстурована поверхня для надійного захоплення. Сертифіковано ISO 13485.',
     img:'img/nitril42.png', packImg:'',
     variants:[
-      {size:'XS', price:190},
-      {size:'M', price:190},
-      {size:'L', price:190}
+      {size:'XS', tiers:[{min:1,price:180},{min:10,price:165},{min:100,price:150},{min:1000,price:140}]},
+      {size:'M',  tiers:[{min:1,price:180},{min:10,price:165},{min:100,price:150},{min:1000,price:140}]},
+      {size:'L',  tiers:[{min:1,price:180},{min:10,price:165},{min:100,price:150},{min:1000,price:140}]}
     ]
   },
   {
@@ -419,10 +424,10 @@ const PRODUCTS = [
     desc:'Чорні нітрилові рукавички для салонів краси, тату, автосервісів та промисловості. Стильний вигляд, висока міцність, без пудри. Не медичні, універсальні.',
     img:'img/nitril22.png', packImg:'',
     variants:[
-      {size:'S', price:220},
-      {size:'M', price:220},
-      {size:'L', price:220},
-      {size:'XL', price:220}
+      {size:'S',  tiers:[{min:1,price:195},{min:10,price:180},{min:100,price:160},{min:1000,price:145}]},
+      {size:'M',  tiers:[{min:1,price:195},{min:10,price:180},{min:100,price:160},{min:1000,price:145}]},
+      {size:'L',  tiers:[{min:1,price:195},{min:10,price:180},{min:100,price:160},{min:1000,price:145}]},
+      {size:'XL', tiers:[{min:1,price:195},{min:10,price:180},{min:100,price:160},{min:1000,price:145}]}
     ]
   },
   {
@@ -430,9 +435,8 @@ const PRODUCTS = [
     desc:'Чорні нітрилові рукавички 4г — підвищена міцність для салонів краси, тату, автосервісів та промисловості. Без пудри, стильний чорний колір, захист від хімії.',
     img:'img/nitril22.png', packImg:'',
     variants:[
-      {size:'S', price:230},
-      {size:'M', price:230},
-      {size:'L', price:230}
+      {size:'S', tiers:[{min:1,price:200},{min:10,price:185},{min:100,price:165},{min:1000,price:150}]},
+      {size:'M', tiers:[{min:1,price:200},{min:10,price:185},{min:100,price:165},{min:1000,price:150}]}
     ]
   },
   {
@@ -440,28 +444,36 @@ const PRODUCTS = [
     desc:'Латексні рукавички високої якості. Висока чутливість та еластичність, ідеальні для хірургії та точних маніпуляцій. Упаковка 100 шт.',
     img:'img/lateks22.png', packImg:'',
     variants:[
-      {size:'S', price:180},
-      {size:'M', price:180},
-      {size:'L', price:180}
+      {size:'S', tiers:[{min:1,price:180},{min:10,price:160},{min:100,price:140},{min:1000,price:130}]},
+      {size:'M', tiers:[{min:1,price:180},{min:10,price:160},{min:100,price:140},{min:1000,price:130}]}
     ]
   },
   {
     id:'vin', cat:'Вініл', name:'Вінілові UNEX',
     desc:'Бюджетні вінілові рукавички для HoReCa, прибирання, харчової промисловості та побуту. Висока щільність, комфорт при довгому носінні.',
     img:'img/vinil22.png', packImg:'',
-    variants:[{size:'L', price:125}]
+    variants:[
+      {size:'S', tiers:[{min:1,price:150},{min:10,price:140},{min:100,price:125},{min:1000,price:118}]},
+      {size:'M', tiers:[{min:1,price:150},{min:10,price:140},{min:100,price:125},{min:1000,price:118}]},
+      {size:'L', tiers:[{min:1,price:150},{min:10,price:140},{min:100,price:125},{min:1000,price:118}]}
+    ]
   },
   {
     id:'tpe', cat:'TPE', name:'TPE для HoReCa', discount:true,
     desc:'Термопластичні еластомерні рукавички, ідеальні для харчової промисловості та HoReCa. Без запаху, без латексу, приємні на дотик.',
     img:'img/vinil22.png', packImg:'',
-    variants:[{size:'M', price:180, oldPrice:230}]
+    variants:[
+      {size:'M', tiers:[{min:1,price:180},{min:10,price:175},{min:100,price:165},{min:1000,price:125}]},
+      {size:'L', tiers:[{min:1,price:180},{min:10,price:175},{min:100,price:165},{min:1000,price:125}]}
+    ]
   },
   {
     id:'mask', cat:'Маски', name:'Маски медичні чорні',
     desc:'Тришарові захисні маски чорного кольору. Щільна посадка, комфортне дихання, фільтрація 3 шари. Упаковка 50 шт.',
     img:'img/maska2.png', packImg:'',
-    variants:[{size:'50 шт/кор', price:120}]
+    variants:[
+      {size:'50 шт/кор', tiers:[{min:1,price:60},{min:10,price:60},{min:100,price:55},{min:1000,price:50}]}
+    ]
   },
 ];
 
@@ -469,6 +481,28 @@ let cart = {};       // 'productId|size' -> qty
 let sheetProduct = null;
 let sheetSize = null;
 let sheetQtyVal = 1;
+
+// Цена за упаковку с учётом скидочного уровня по количеству
+function priceFor(v, qty) {
+  const tiers = v.tiers || [{min:1, price:v.price}];
+  let p = tiers[0].price;
+  for (const t of tiers) { if (qty >= t.min) p = t.price; }
+  return p;
+}
+// Базовая (розничная) цена варианта
+function basePrice(v) { return (v.tiers || [{min:1, price:v.price}])[0].price; }
+// Скидка % на текущем уровне
+function tierDiscount(v, qty) {
+  const b = basePrice(v);
+  const p = priceFor(v, qty);
+  return b > p ? Math.round((1 - p / b) * 100) : 0;
+}
+// Следующий скидочный порог (чтобы показать «ще −X% від N уп»)
+function nextTier(v, qty) {
+  const tiers = v.tiers || [];
+  for (const t of tiers) if (t.min > qty) return t;
+  return null;
+}
 
 // ===== Toasts =====
 function toast(msg) {
@@ -484,13 +518,23 @@ function toast(msg) {
 function renderCatalog() {
   const grid = document.getElementById('catalog-grid');
   grid.innerHTML = PRODUCTS.map(p => {
-    const prices = p.variants.map(v => v.price);
+    const prices = p.variants.map(v => basePrice(v));
     const min = Math.min(...prices);
     const max = Math.max(...prices);
     const priceStr = min === max ? min + ' <small>грн</small>' : min + '–' + max + ' <small>грн</small>';
-    const oldMin = Math.min(...p.variants.map(v => v.oldPrice || Infinity));
-    const hasOld = isFinite(oldMin) && oldMin > min;
-    const oldStr = hasOld ? `<span class="old-price">${oldMin} грн</span>` : '';
+    // Скидочная лестница товара: от min уп к следующему уровню
+    const tierHint = (() => {
+      const t = p.variants[0].tiers || [];
+      const parts = [];
+      t.forEach((tr, i) => {
+        if (i === 0) return;
+        const prev = t[i-1].price;
+        const disc = Math.round((1 - tr.price / prev) * 100);
+        parts.push('від ' + tr.min + ' уп −' + disc + '%');
+      });
+      return parts.join(' · ');
+    })();
+    const tierStr = tierHint ? `<div class="tiers">📉 ${tierHint}</div>` : '';
     const sizesStr = p.variants.map(v => v.size.replace(/\([^)]*\)/,'').trim()).join(', ');
     return `<div class="card" onclick="openSheet('${p.id}')">
       <div class="media">
@@ -505,8 +549,9 @@ function renderCatalog() {
         <span class="cat">${p.cat}</span>
         <h3>${p.name}</h3>
         <div class="sizes">Розміри: ${sizesStr}</div>
+        ${tierStr}
         <div class="bottom">
-          <div class="price">${priceStr} ${oldStr}</div>
+          <div class="price">${priceStr}</div>
         </div>
       </div>
     </div>`;
@@ -538,7 +583,7 @@ function renderSheet() {
   document.getElementById('sheet-title').textContent = p.name;
   document.getElementById('sheet-desc').textContent = p.desc;
   document.getElementById('sheet-sizes').innerHTML = p.variants.map(v =>
-    `<div class="size-pick ${v.size === sheetSize ? 'active' : ''}" onclick="sheetPickSize('${v.size}')">${v.size}<span class="pr">${v.price} грн${v.oldPrice ? ` <s>${v.oldPrice}</s>` : ''}</span></div>`
+    `<div class="size-pick ${v.size === sheetSize ? 'active' : ''}" onclick="sheetPickSize('${v.size}')">${v.size}<span class="pr">${basePrice(v)} грн</span></div>`
   ).join('');
   document.getElementById('sheet-qty').value = sheetQtyVal;
   updateSheetTotal();
@@ -547,7 +592,7 @@ function sheetPickSize(s) {
   sheetSize = s;
   const p = sheetProduct;
   document.getElementById('sheet-sizes').innerHTML = p.variants.map(v =>
-    `<div class="size-pick ${v.size === sheetSize ? 'active' : ''}" onclick="sheetPickSize('${v.size}')">${v.size}<span class="pr">${v.price} грн</span></div>`
+    `<div class="size-pick ${v.size === sheetSize ? 'active' : ''}" onclick="sheetPickSize('${v.size}')">${v.size}<span class="pr">${basePrice(v)} грн</span></div>`
   ).join('');
   updateSheetTotal();
 }
@@ -562,12 +607,29 @@ function sheetQtyInput(val) {
   document.getElementById('sheet-qty').value = sheetQtyVal;
   updateSheetTotal();
 }
-function sheetPrice() {
-  const v = sheetProduct.variants.find(x => x.size === sheetSize);
-  return v ? v.price : 0;
+function sheetVariant() {
+  return sheetProduct.variants.find(x => x.size === sheetSize);
 }
 function updateSheetTotal() {
-  document.getElementById('sheet-total').textContent = (sheetPrice() * sheetQtyVal) + ' грн';
+  const v = sheetVariant();
+  if (!v) return;
+  const qty = sheetQtyVal;
+  const price = priceFor(v, qty);
+  const base = basePrice(v);
+  const disc = tierDiscount(v, qty);
+  const saved = (base - price) * qty;
+  let html = price * qty + ' грн';
+  if (disc > 0) {
+    html += `<div class="saved">🎉 Знижка ${disc}% · економія ${saved} грн</div>`;
+  }
+  // Подсказка про следующий уровень скидки
+  const nt = nextTier(v, qty);
+  if (nt) {
+    const np = priceFor(v, nt.min);
+    const nd = Math.round((1 - np / base) * 100);
+    html += `<div class="next-tier">💡 Ще ${nt.min - qty} уп до знижки ${nd}% (${np} грн/уп)</div>`;
+  }
+  document.getElementById('sheet-total').innerHTML = html;
 }
 function addFromSheet() {
   const p = sheetProduct;
@@ -582,12 +644,25 @@ function addFromSheet() {
 
 // ===== Cart bar =====
 function cartCount() { return Object.values(cart).reduce((a,b)=>a+b,0); }
+// Цена позиции корзины с учётом скидочного уровня по её количеству
+function itemPrice(id, size, qty) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return 0;
+  const v = p.variants.find(x => x.size === size);
+  return v ? priceFor(v, qty) : 0;
+}
 function cartSum() {
   return Object.entries(cart).reduce((s,[key,q]) => {
     const [id, size] = key.split('|');
+    return s + q * itemPrice(id, size, q);
+  }, 0);
+}
+function cartBaseSum() {
+  return Object.entries(cart).reduce((s,[key,q]) => {
+    const [id, size] = key.split('|');
     const p = PRODUCTS.find(x => x.id === id);
-    const v = p.variants.find(x => x.size === size);
-    return s + q * v.price;
+    const v = p && p.variants.find(x => x.size === size);
+    return s + q * (v ? basePrice(v) : 0);
   }, 0);
 }
 function updateCartbar() {
@@ -595,7 +670,12 @@ function updateCartbar() {
   const n = cartCount();
   if (n > 0) {
     bar.classList.remove('hidden');
-    document.getElementById('cartbar-count').textContent = n + ' шт · ' + cartSum() + ' грн';
+    const sum = cartSum();
+    const base = cartBaseSum();
+    const saved = base - sum;
+    let txt = n + ' шт · ' + sum + ' грн';
+    if (saved > 0) txt += ' · −' + saved + ' грн 🎉';
+    document.getElementById('cartbar-count').textContent = txt;
     document.getElementById('cartbar-sum').textContent = '';
   } else bar.classList.add('hidden');
 }
@@ -638,20 +718,28 @@ function renderCart() {
     const [id, size] = key.split('|');
     const p = PRODUCTS.find(x => x.id === id);
     const v = p.variants.find(x => x.size === size);
+    const price = priceFor(v, q);
+    const base = basePrice(v);
+    const saved = (base - price) * q;
+    const savedStr = saved > 0 ? `<div class="saved">Знижка −${tierDiscount(v,q)}% · економія ${saved} грн</div>` : '';
     return `<div class="cart-item">
       <div class="top">
-        <div><h4>${p.name}</h4><div class="sub">Розмір ${v.size}</div></div>
+        <div><h4>${p.name}</h4><div class="sub">Розмір ${v.size} · ${price} грн/уп</div></div>
         <button class="btn-del" onclick="delItem('${key}')">✕</button>
       </div>
+      ${savedStr}
       <div class="bot">
         <div class="qty">
           <button onclick="cartChg('${key}',-1)">−</button><span style="min-width:24px;text-align:center;font-weight:800">${q}</span><button onclick="cartChg('${key}',1)">+</button>
         </div>
-        <div class="line-price">${q * v.price} грн</div>
+        <div class="line-price">${price * q} грн</div>
       </div>
     </div>`;
   }).join('');
-  document.getElementById('cart-total-sum').textContent = cartSum() + ' грн';
+  const sum = cartSum();
+  const base = cartBaseSum();
+  const savedAll = base - sum;
+  document.getElementById('cart-total-sum').innerHTML = sum + ' грн' + (savedAll > 0 ? `<div class="saved">Економія на замовленні: ${savedAll} грн 🎉</div>` : '');
 }
 function cartChg(key, d) {
   cart[key] = (cart[key] || 0) + d;
@@ -771,7 +859,8 @@ function submitOrder() {
     const [id, size] = key.split('|');
     const p = PRODUCTS.find(x => x.id === id);
     const v = p.variants.find(x => x.size === size);
-    return p.name + ' (' + size + '), ' + q + ' уп = ' + (q*v.price) + ' грн';
+    const price = priceFor(v, q);
+    return p.name + ' (' + size + '), ' + q + ' уп × ' + price + ' грн = ' + (price*q) + ' грн' + (tierDiscount(v,q) > 0 ? ' (знижка −' + tierDiscount(v,q) + '%)' : '');
   }).join('\n');
   const comment = document.getElementById('f-comment').value.trim();
 

@@ -38,11 +38,41 @@ def save_offset(off):
     except Exception as e:
         print(f"save offset error: {e}")
 
+CHANNEL_ID = os.environ.get("UNEX_CHANNEL_ID", "-1001140128016")
+
 def welcome_kb():
     return json.dumps({"inline_keyboard": [[{
         "text": "🛒 Відкрити каталог UNEX",
         "web_app": {"url": APP_URL}
     }]]})
+
+def approve_kb(action_id=""):
+    """Inline keyboard для согласования постов."""
+    buttons = []
+    if action_id:
+        # Если есть action_id, показываем кнопки действий
+        buttons.append([{
+            "text": "✅ Опубликовать",
+            "callback_data": f"approve_post:{action_id}:publish"
+        }, {
+            "text": "❌ Пропустить",
+            "callback_data": f"approve_post:{action_id}:skip"
+        }, {
+            "text": "🔄 Переделать",
+            "callback_data": f"approve_post:{action_id}:regenerate"
+        }])
+    else:
+        buttons.append([{
+            "text": "✅ Опубликовать",
+            "callback_data": "approve_post:publish"
+        }, {
+            "text": "❌ Пропустить",
+            "callback_data": "approve_post:skip"
+        }, {
+            "text": "🔄 Переделать",
+            "callback_data": "approve_post:regenerate"
+        }])
+    return json.dumps({"inline_keyboard": buttons})
 
 def main():
     if not BOT_TOKEN:
@@ -80,6 +110,66 @@ def main():
     handled = 0
 
     for u in fresh:
+        # === Обработка callback_query (нажатия inline-кнопок) ===
+        cb = u.get("callback_query")
+        if cb:
+            action_data = cb.get("data", "")
+            msg = cb.get("message") or {}
+            chat_id = msg.get("chat", {}).get("id")
+            message_id = msg.get("message_id")
+            user = cb.get("from") or {}
+            
+            print(f"callback_query: data={action_data}, chat={chat_id}, msg={message_id}")
+            
+            if "approve_post:" not in action_data:
+                tg("answerCallbackQuery", callback_query_id=cb.get("id"), text="Неизвестная команда")
+                continue
+            
+            parts = action_data.split(":")
+            cmd = parts[-1] if len(parts) >= 2 else ""
+            
+            state_file = "/tmp/unex_approve_state.json"
+            approve_state = {}
+            if os.path.exists(state_file):
+                try:
+                    with open(state_file) as f:
+                        approve_state = json.load(f)
+                except:
+                    pass
+            
+            if cmd == "publish":
+                pending = approve_state.pop("pending", {})
+                if pending:
+                    photo_url = pending.get("photo_url")
+                    caption_text = pending.get("caption_text", "")
+                    
+                    if photo_url:
+                        tg("sendPhoto", chat_id=CHANNEL_ID, photo=photo_url, caption=caption_text, parse_mode="HTML")
+                    else:
+                        tg("sendMessage", chat_id=CHANNEL_ID, text=caption_text, parse_mode="HTML")
+                    
+                    tg("answerCallbackQuery", callback_query_id=cb.get("id"), text="✅ Пост опубликован!")
+                    tg("editMessageText", chat_id=chat_id, message_id=message_id, 
+                       text="✅ <b>Пост опубліковано!</b>", parse_mode="HTML")
+                    print(f"Пост опубликован в канал {CHANNEL_ID}")
+                else:
+                    tg("answerCallbackQuery", callback_query_id=cb.get("id"), text="Нет поста для публикации")
+            
+            elif cmd == "skip":
+                approve_state.pop("pending", None)
+                tg("answerCallbackQuery", callback_query_id=cb.get("id"), text="⏭ Пропущено")
+                tg("editMessageText", chat_id=chat_id, message_id=message_id,
+                   text="⏭ Пост пропущено. Следующий будет завтра.", parse_mode="HTML")
+                with open(state_file, "w") as f:
+                    json.dump(approve_state, f)
+            
+            elif cmd == "regenerate":
+                tg("answerCallbackQuery", callback_query_id=cb.get("id"), 
+                   text="🔄 Запрошено переделывание. Ждите новый вариант.", show_alert=True)
+            
+            save_offset(last_id + 1)
+            continue
+        
         msg = u.get("message") or {}
         text = (msg.get("text") or "").strip()
         user = msg.get("from") or {}
