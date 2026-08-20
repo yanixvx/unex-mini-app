@@ -472,7 +472,7 @@ const PRODUCTS = [
     desc:'Тришарові захисні маски чорного кольору. Щільна посадка, комфортне дихання, фільтрація 3 шари. Упаковка 50 шт.',
     img:'img/maska2.png', packImg:'', pack:50,
     variants:[
-      {size:'50 шт/кор', tiers:[{min:1,price:60},{min:10,price:60},{min:100,price:55},{min:1000,price:50}]}
+      {size:'50 шт/кор', tiers:[{min:1,price:120},{min:10,price:120},{min:100,price:110},{min:1000,price:110}]}
     ]
   },
 ];
@@ -567,7 +567,7 @@ function renderSheet() {
   document.getElementById('sheet-img').innerHTML = `<img src="${p.img}" alt="${p.name}">`;
   document.getElementById('sheet-cat').textContent = p.cat;
   document.getElementById('sheet-title').textContent = p.name;
-  document.getElementById('sheet-desc').textContent = p.desc + (p.pack ? ` В упаковці ${p.pack} шт.` : '');
+  document.getElementById('sheet-desc').innerHTML = p.desc + (p.pack ? ` <b>В упаковці ${p.pack} шт.</b>` : '');
   document.getElementById('sheet-sizes').innerHTML = p.variants.map(v =>
     `<div class="size-pick ${v.size === sheetSize ? 'active' : ''}" onclick="sheetPickSize('${v.size}')">${v.size}</div>`
   ).join('');
