@@ -522,19 +522,6 @@ function renderCatalog() {
     const min = Math.min(...prices);
     const max = Math.max(...prices);
     const priceStr = min === max ? min + ' <small>грн</small>' : min + '–' + max + ' <small>грн</small>';
-    // Скидочная лестница товара: от min уп к следующему уровню
-    const tierHint = (() => {
-      const t = p.variants[0].tiers || [];
-      const parts = [];
-      t.forEach((tr, i) => {
-        if (i === 0) return;
-        const prev = t[i-1].price;
-        const disc = Math.round((1 - tr.price / prev) * 100);
-        parts.push('від ' + tr.min + ' уп −' + disc + '%');
-      });
-      return parts.join(' · ');
-    })();
-    const tierStr = tierHint ? `<div class="tiers">📉 ${tierHint}</div>` : '';
     const sizesStr = p.variants.map(v => v.size.replace(/\([^)]*\)/,'').trim()).join(', ');
     return `<div class="card" onclick="openSheet('${p.id}')">
       <div class="media">
@@ -549,7 +536,6 @@ function renderCatalog() {
         <span class="cat">${p.cat}</span>
         <h3>${p.name}</h3>
         <div class="sizes">Розміри: ${sizesStr}</div>
-        ${tierStr}
         <div class="bottom">
           <div class="price">${priceStr}</div>
         </div>
@@ -583,7 +569,7 @@ function renderSheet() {
   document.getElementById('sheet-title').textContent = p.name;
   document.getElementById('sheet-desc').textContent = p.desc;
   document.getElementById('sheet-sizes').innerHTML = p.variants.map(v =>
-    `<div class="size-pick ${v.size === sheetSize ? 'active' : ''}" onclick="sheetPickSize('${v.size}')">${v.size}<span class="pr">${basePrice(v)} грн</span></div>`
+    `<div class="size-pick ${v.size === sheetSize ? 'active' : ''}" onclick="sheetPickSize('${v.size}')">${v.size}</div>`
   ).join('');
   document.getElementById('sheet-qty').value = sheetQtyVal;
   updateSheetTotal();
@@ -592,7 +578,7 @@ function sheetPickSize(s) {
   sheetSize = s;
   const p = sheetProduct;
   document.getElementById('sheet-sizes').innerHTML = p.variants.map(v =>
-    `<div class="size-pick ${v.size === sheetSize ? 'active' : ''}" onclick="sheetPickSize('${v.size}')">${v.size}<span class="pr">${basePrice(v)} грн</span></div>`
+    `<div class="size-pick ${v.size === sheetSize ? 'active' : ''}" onclick="sheetPickSize('${v.size}')">${v.size}</div>`
   ).join('');
   updateSheetTotal();
 }
@@ -627,7 +613,7 @@ function updateSheetTotal() {
   if (nt) {
     const np = priceFor(v, nt.min);
     const nd = Math.round((1 - np / base) * 100);
-    html += `<div class="next-tier">💡 Ще ${nt.min - qty} уп до знижки ${nd}% (${np} грн/уп)</div>`;
+    html += `<div class="next-tier">💡 Ще ${nt.min - qty} уп до знижки ${nd}%</div>`;
   }
   document.getElementById('sheet-total').innerHTML = html;
 }
