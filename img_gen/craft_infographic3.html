@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { width:1080px; height:1350px; position:relative; overflow:hidden; font-family:-apple-system,'SF Pro Display',Roboto,sans-serif; background:#f5f0e6; }
+  /* Заголовок сверху — не перекрывает товар */
+  .header { position:absolute; top:0; left:0; right:0; text-align:center; padding:34px 40px 0; z-index:3; }
+  .brand-line { display:flex; justify-content:space-between; align-items:center; }
+  .brand { color:#111; font-size:26px; font-weight:800; background:rgba(255,255,255,.7); padding:8px 20px; border-radius:30px; }
+  .badge { background:#ea5b13; color:#fff; font-size:24px; font-weight:800; padding:8px 20px; border-radius:30px; }
+  .title { font-size:50px; font-weight:800; color:#111; line-height:1.08; letter-spacing:-.5px; margin-top:22px; }
+  .title span { color:#ea5b13; }
+  .subtitle { font-size:25px; color:#666; font-weight:600; margin-top:10px; }
+  /* Товар по центру — полностью виден */
+  .hero { position:absolute; top:230px; left:60px; right:60px; bottom:390px; display:flex; align-items:center; justify-content:center; z-index:1; }
+  .hero img { max-width:100%; max-height:100%; object-fit:contain; border-radius:28px; box-shadow:0 18px 50px rgba(0,0,0,.18); }
+  /* Инфографика снизу — не перекрывает товар */
+  .bottom { position:absolute; left:40px; right:40px; bottom:36px; z-index:3; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .item { background:rgba(255,255,255,.92); border-radius:18px; padding:18px 20px; display:flex; align-items:center; gap:14px; box-shadow:0 4px 14px rgba(0,0,0,.06); }
+  .item .ic { font-size:30px; }
+  .item .t { font-size:21px; font-weight:800; color:#111; }
+  .item .d { font-size:16px; color:#555; }
+  .pricebox { margin-top:16px; background:#111; border-radius:20px; padding:20px 26px; display:flex; align-items:center; justify-content:space-between; }
+  .pricebox .lbl { color:#aaa; font-size:18px; font-weight:600; }
+  .pricebox .val { color:#ffd000; font-size:42px; font-weight:800; }
+  .pricebox .val small { font-size:18px; font-weight:600; color:#fff; }
+  .cta { margin-top:14px; background:#ea5b13; color:#fff; text-align:center; font-size:28px; font-weight:800; padding:20px; border-radius:20px; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div class="brand-line">
+      <div class="brand">🧤 UNEX</div>
+      <div class="badge">🔥 СКИДКА</div>
+    </div>
+    <div class="title">Крафт-пакети для <span>стерилізації</span></div>
+    <div class="subtitle">100 шт • Розмір 100×200 мм</div>
+  </div>
+  <div class="hero">
+    <img src="file:///Users/yan1xvx/Documents/unex_mini_app/img_gen/craft_bg1.jpg">
+  </div>
+  <div class="bottom">
+    <div class="grid">
+      <div class="item"><div class="ic">📜</div><div><div class="t">Крафт</div><div class="d">міцний, не розмокає</div></div></div>
+      <div class="item"><div class="ic">🔥</div><div><div class="t">134°C</div><div class="d">термостійкість</div></div></div>
+      <div class="item"><div class="ic">✅</div><div><div class="t">Індикатор</div><div class="d">стерилізації</div></div></div>
+      <div class="item"><div class="ic">📐</div><div><div class="t">100×200</div><div class="d">універсальний</div></div></div>
+    </div>
+    <div class="pricebox">
+      <div class="lbl">Ціна за 100 шт</div>
+      <div class="val">150 <small>грн</small></div>
+    </div>
+    <div class="cta">💬 Знижка в Telegram → @UNEX_UA</div>
+  </div>
+</body>
+</html>
