@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { width:1080px; height:1350px; display:flex; align-items:center; justify-content:center; background:linear-gradient(160deg, #1a1a1a 0%, #2d2d2d 55%, #ea5b13 160%); font-family:-apple-system,Roboto,sans-serif; }
+  /* Телефон */
+  .phone { width:380px; height:790px; background:#111; border-radius:56px; padding:14px; box-shadow:0 40px 90px rgba(0,0,0,.55), inset 0 0 0 2px #333; position:relative; transform:rotate(-4deg); }
+  .screen { width:100%; height:100%; border-radius:44px; overflow:hidden; position:relative; background:#fff; }
+  .screen img { width:100%; height:100%; object-fit:cover; }
+  .notch { position:absolute; top:12px; left:50%; transform:translateX(-50%); width:110px; height:28px; background:#111; border-radius:20px; z-index:5; }
+  /* Лейбл над телефоном */
+  .label { position:absolute; top:60px; left:0; right:0; text-align:center; color:#fff; font-size:38px; font-weight:800; letter-spacing:.5px; text-shadow:0 2px 12px rgba(0,0,0,.4); }
+  .label span { color:#ffd000; }
+  /* Хештег внизу */
+  .tag { position:absolute; bottom:48px; left:0; right:0; text-align:center; color:#ccc; font-size:26px; font-weight:600; }
+</style>
+</head>
+<body>
+  <div class="label">🧤 UNEX — каталог <span>у телефоні</span></div>
+  <div class="phone">
+    <div class="screen">
+      <img src="file:///Users/yan1xvx/Documents/unex_mini_app/img_gen/miniapp_screen.png">
+      <div class="notch"></div>
+    </div>
+  </div>
+  <div class="tag">Замовлення в 3 кліки · @UNEX_UA</div>
+</body>
+</html>

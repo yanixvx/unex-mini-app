@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { width:1280px; height:720px; position:relative; overflow:hidden; font-family:-apple-system,'SF Pro Display',Roboto,sans-serif; background:#000; }
+  .bg { position:absolute; inset:0; }
+  .bg img { width:100%; height:100%; object-fit:cover; }
+  .grad-top { position:absolute; top:0; left:0; right:0; height:140px; background:linear-gradient(180deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,0) 100%); }
+  .grad-bot { position:absolute; bottom:0; left:0; right:0; height:180px; background:linear-gradient(0deg, rgba(0,0,0,.8) 0%, rgba(0,0,0,0) 100%); }
+  .brand { position:absolute; top:20px; left:28px; color:#fff; font-size:26px; font-weight:800; background:rgba(0,0,0,.45); padding:8px 20px; border-radius:30px; z-index:3; }
+  .badge { position:absolute; top:20px; right:28px; background:#ea5b13; color:#fff; font-size:22px; font-weight:800; padding:8px 20px; border-radius:30px; z-index:3; }
+  .slogan { position:absolute; left:44px; right:44px; bottom:150px; text-align:center; z-index:3; }
+  .slogan .l1 { color:#fff; font-size:52px; font-weight:800; line-height:1.1; letter-spacing:-.5px; }
+  .slogan .l1 span { color:#ffd000; }
+  .slogan .l2 { color:#ffd000; font-size:30px; font-weight:800; margin-top:10px; }
+  .seg { position:absolute; left:0; right:0; bottom:52px; display:flex; justify-content:center; gap:14px; z-index:3; }
+  .seg-item { background:rgba(0,0,0,.55); border:2px solid rgba(255,208,0,.4); border-radius:34px; padding:10px 22px; color:#fff; font-size:21px; font-weight:700; }
+  .cta { position:absolute; left:44px; right:44px; bottom:0; height:0; z-index:0; }
+</style>
+</head>
+<body>
+  <div class="bg"><img src="file:///Users/yan1xvx/Documents/unex_mini_app/img_gen/ad_products.jpg"></div>
+  <div class="grad-top"></div>
+  <div class="grad-bot"></div>
+  <div class="brand">🧤 UNEX</div>
+  <div class="badge">ПРЯМИЙ ПОСТАЧАЛЬНИК</div>
+  <div class="slogan">
+    <div class="l1">Рукавички для тих, хто <span>працює руками</span></div>
+    <div class="l2">Оптом і в роздріб · знижка на перший заказ</div>
+  </div>
+  <div class="seg">
+    <div class="seg-item">🍳 Ресторани</div>
+    <div class="seg-item">💅 Манікюр</div>
+    <div class="seg-item">🏥 Медзакупки</div>
+  </div>
+</body>
+</html>

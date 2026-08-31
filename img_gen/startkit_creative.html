@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { width:1080px; height:1350px; position:relative; overflow:hidden; font-family:-apple-system,'SF Pro Display',Roboto,sans-serif; background:#0e0e0e; }
+  .bg-grad { position:absolute; inset:0; background:radial-gradient(120% 90% at 50% 0%, #1e1e1e 0%, #0e0e0e 60%, #000 100%); }
+  .header { position:absolute; top:0; left:0; right:0; text-align:center; padding:44px 40px 0; z-index:3; }
+  .brand-line { display:flex; justify-content:space-between; align-items:center; }
+  .brand { color:#fff; font-size:26px; font-weight:800; background:rgba(255,255,255,.1); padding:8px 22px; border-radius:30px; }
+  .badge { background:#ea5b13; color:#fff; font-size:24px; font-weight:800; padding:8px 22px; border-radius:30px; }
+  .title { font-size:52px; font-weight:800; color:#fff; line-height:1.08; letter-spacing:-.5px; margin-top:24px; }
+  .title span { color:#ffd000; }
+  .subtitle { font-size:24px; color:#bbb; font-weight:600; margin-top:10px; }
+  /* Товары */
+  .products { position:absolute; top:280px; left:40px; right:40px; display:flex; gap:18px; z-index:2; }
+  .prod { flex:1; background:rgba(255,255,255,.06); border-radius:24px; padding:22px 14px 18px; text-align:center; }
+  .prod img { width:100%; height:230px; object-fit:contain; }
+  .prod .name { color:#fff; font-size:21px; font-weight:800; margin-top:14px; }
+  .prod .sub { color:#aaa; font-size:16px; font-weight:600; margin-top:4px; }
+  .prod .price { color:#ffd000; font-size:28px; font-weight:800; margin-top:8px; }
+  /* Сумма */
+  .total { position:absolute; top:760px; left:40px; right:40px; text-align:center; z-index:3; }
+  .total .lbl { color:#999; font-size:22px; font-weight:600; }
+  .total .line { color:#fff; font-size:34px; font-weight:800; margin-top:8px; }
+  .total .old { color:#999; font-size:26px; text-decoration:line-through; font-weight:600; }
+  .total .new { color:#ffd000; font-size:48px; font-weight:800; }
+  .total .new small { font-size:22px; color:#fff; font-weight:600; }
+  /* CTA */
+  .cta { position:absolute; left:48px; right:48px; bottom:44px; background:#ea5b13; color:#fff; text-align:center; font-size:32px; font-weight:800; padding:24px; border-radius:22px; z-index:3; }
+  .cta small { display:block; font-size:19px; font-weight:600; color:rgba(255,255,255,.85); margin-top:6px; }
+</style>
+</head>
+<body>
+  <div class="bg-grad"></div>
+  <div class="header">
+    <div class="brand-line">
+      <div class="brand">🧤 UNEX</div>
+      <div class="badge">🔥 СТАРТ-КІТ</div>
+    </div>
+    <div class="title">Комплект для <span>старту</span></div>
+    <div class="subtitle">Все для закладу — одним замовленням</div>
+  </div>
+  <div class="products">
+    <div class="prod">
+      <img src="file:///Users/yan1xvx/Documents/unex_mini_app/img/nitril42.png">
+      <div class="name">Нітрил 4г</div>
+      <div class="sub">100 шт</div>
+      <div class="price">від 180 грн</div>
+    </div>
+    <div class="prod">
+      <img src="file:///Users/yan1xvx/Documents/unex_mini_app/img/maska2.png">
+      <div class="name">Маски чорні</div>
+      <div class="sub">50 шт</div>
+      <div class="price">120 грн</div>
+    </div>
+    <div class="prod">
+      <img src="file:///Users/yan1xvx/Documents/unex_mini_app/img/kraft_pak.png">
+      <div class="name">Крафт-пакети</div>
+      <div class="sub">100 шт</div>
+      <div class="price">150 грн</div>
+    </div>
+  </div>
+  <div class="total">
+    <div class="lbl">Сума окремо: <span class="old">450 грн</span></div>
+    <div class="line">В комплекті: <span class="new">зі знижкою! <small>→ @UNEX_UA</small></span></div>
+  </div>
+  <div class="cta">💬 Напишіть @UNEX_UA — дізнайтесь свою знижку
+    <small>або каталог: https://t.me/unexmedbot</small>
+  </div>
+</body>
+</html>
