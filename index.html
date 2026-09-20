@@ -406,81 +406,89 @@ if (tg) {
   tg.onEvent('mainButtonClicked', submitOrder);
 }
 
-// ===== DATA: товар -> варіанти розмірів (ціни з прайсу UNEX, 08.2026) =====
-// tiers: скидочні рівні [{min: кількість уп, price: ціна за уп}]
+// ===== DATA: товар -> варіанти розмірів (ціни з прайсу UNEX, 09.2026) =====
+// tiers: скидочні рівні 1-9 / 10-39 / від 40 уп [{min: кількість уп, price: ціна за уп}]
 const PRODUCTS = [
   {
-    id:'n4', cat:'Нітрил', name:'Нітрил голубий 4г', hit:true,
+    id:'n4', cat:'Нітрил', name:'Нітрил Blue (блакитний) 4г', hit:true,
     desc:'Міцні медичні рукавички для стоматології, медичних центрів, лабораторій та HoReCa. Без латексу, без алергії, текстурована поверхня для надійного захоплення. Сертифіковано ISO 13485.',
     img:'img/nitril42.png', packImg:'', pack:100,
     variants:[
-      {size:'XS', tiers:[{min:1,price:190},{min:10,price:174},{min:100,price:158},{min:1000,price:148}]},
-      {size:'M',  tiers:[{min:1,price:190},{min:10,price:174},{min:100,price:158},{min:1000,price:148}]},
-      {size:'L',  tiers:[{min:1,price:190},{min:10,price:174},{min:100,price:158},{min:1000,price:148}]}
+      {size:'XS', tiers:[{min:1,price:200},{min:10,price:190},{min:40,price:180}]},
+      {size:'M',  tiers:[{min:1,price:200},{min:10,price:190},{min:40,price:180}]},
+      {size:'L',  tiers:[{min:1,price:200},{min:10,price:190},{min:40,price:180}]}
     ]
   },
   {
-    id:'nc', cat:'Нітрил', name:'Нітрил чорний 3.6г',
+    id:'nc', cat:'Нітрил', name:'Нітрил чорний 3.5г',
     desc:'Чорні нітрилові рукавички для салонів краси, тату, автосервісів та промисловості. Стильний вигляд, висока міцність, без пудри. Не медичні, універсальні.',
     img:'img/nitril22.png', packImg:'', pack:100,
     variants:[
-      {size:'S',  tiers:[{min:1,price:200},{min:10,price:185},{min:100,price:164},{min:1000,price:154}]},
-      {size:'M',  tiers:[{min:1,price:200},{min:10,price:185},{min:100,price:164},{min:1000,price:154}]},
-      {size:'L',  tiers:[{min:1,price:200},{min:10,price:185},{min:100,price:164},{min:1000,price:154}]},
-      {size:'XL', tiers:[{min:1,price:200},{min:10,price:185},{min:100,price:164},{min:1000,price:154}]}
+      {size:'S',  tiers:[{min:1,price:220},{min:10,price:210},{min:40,price:200}]},
+      {size:'M',  tiers:[{min:1,price:220},{min:10,price:210},{min:40,price:200}]},
+      {size:'L',  tiers:[{min:1,price:220},{min:10,price:210},{min:40,price:200}]},
+      {size:'XL', tiers:[{min:1,price:220},{min:10,price:210},{min:40,price:200}]}
     ]
   },
   {
-    id:'nc4', cat:'Нітрил', name:'Нітрил чорний 4г',
+    id:'nc4', cat:'Нітрил', name:'Нітрил Black щільний 4г',
     desc:'Чорні нітрилові рукавички 4г — підвищена міцність для салонів краси, тату, автосервісів та промисловості. Без пудри, стильний чорний колір, захист від хімії.',
     img:'img/nitril22.png', packImg:'', pack:100,
     variants:[
-      {size:'S', tiers:[{min:1,price:210},{min:10,price:194},{min:100,price:173},{min:1000,price:158}]},
-      {size:'M', tiers:[{min:1,price:210},{min:10,price:194},{min:100,price:173},{min:1000,price:158}]}
+      {size:'S', tiers:[{min:1,price:230},{min:10,price:220},{min:40,price:210}]},
+      {size:'M', tiers:[{min:1,price:230},{min:10,price:220},{min:40,price:210}]}
     ]
   },
   {
-    id:'lat', cat:'Латекс', name:'Латексні UNEX',
-    desc:'Латексні рукавички високої якості. Висока чутливість та еластичність, ідеальні для хірургії та точних маніпуляцій. Упаковка 100 шт.',
+    id:'nitrovin', cat:'Нітрил', name:'Нітровініл чорний 7.5г',
+    desc:'Нітровінілові рукавички підвищеної щільності 7,5 г — найміцніший варіант для важких умов роботи. Стійкі до розривів, захищають від хімії та бруду. Упаковка 100 шт.',
+    img:'img/nitril22.png', packImg:'', pack:100,
+    variants:[
+      {size:'XL', tiers:[{min:1,price:260},{min:10,price:250},{min:40,price:240}]}
+    ]
+  },
+  {
+    id:'lat', cat:'Латекс', name:'Латекс без пудри (СТРОК)',
+    desc:'Латексні рукавички без пудри, з обмеженим строком придатності. Висока чутливість та еластичність, ідеальні для хірургії та точних маніпуляцій. Упаковка 100 шт.',
     img:'img/lateks22.png', packImg:'', pack:100,
     variants:[
-      {size:'S', tiers:[{min:1,price:180},{min:10,price:160},{min:100,price:140},{min:1000,price:130}]},
-      {size:'M', tiers:[{min:1,price:180},{min:10,price:160},{min:100,price:140},{min:1000,price:130}]}
+      {size:'S', tiers:[{min:1,price:200},{min:10,price:190},{min:40,price:180}]},
+      {size:'M', tiers:[{min:1,price:200},{min:10,price:190},{min:40,price:180}]}
     ]
   },
   {
-    id:'vin', cat:'Вініл', name:'Вінілові UNEX',
+    id:'vin', cat:'Вініл', name:'Вінілові прозорі',
     desc:'Бюджетні вінілові рукавички для HoReCa, прибирання, харчової промисловості та побуту. Висока щільність, комфорт при довгому носінні.',
     img:'img/vinil22.png', packImg:'', pack:100,
     variants:[
-      {size:'S', tiers:[{min:1,price:150},{min:10,price:140},{min:100,price:125},{min:1000,price:118}]},
-      {size:'M', tiers:[{min:1,price:150},{min:10,price:140},{min:100,price:125},{min:1000,price:118}]},
-      {size:'L', tiers:[{min:1,price:150},{min:10,price:140},{min:100,price:125},{min:1000,price:118}]}
+      {size:'S', tiers:[{min:1,price:140},{min:10,price:130},{min:40,price:120}]},
+      {size:'M', tiers:[{min:1,price:140},{min:10,price:130},{min:40,price:120}]},
+      {size:'L', tiers:[{min:1,price:140},{min:10,price:130},{min:40,price:120}]}
     ]
   },
   {
-    id:'tpe', cat:'TPE', name:'TPE для HoReCa', discount:true,
+    id:'tpe', cat:'TPE', name:'TPE чорні (не тактильні)', discount:true,
     desc:'Термопластичні еластомерні рукавички, ідеальні для харчової промисловості та HoReCa. Тонкі, легкі, без запаху, без латексу, приємні на дотик. В упаковці 200 шт.',
     img:'img/tpe_new.png', packImg:'', pack:200,
     variants:[
-      {size:'M', tiers:[{min:1,price:180},{min:10,price:175},{min:100,price:165},{min:1000,price:125}]},
-      {size:'L', tiers:[{min:1,price:180},{min:10,price:175},{min:100,price:165},{min:1000,price:125}]}
+      {size:'M', tiers:[{min:1,price:195},{min:10,price:190},{min:40,price:185}]},
+      {size:'L', tiers:[{min:1,price:195},{min:10,price:190},{min:40,price:185}]}
     ]
   },
   {
-    id:'mask', cat:'Маски', name:'Маски медичні чорні',
-    desc:'Тришарові захисні маски чорного кольору. Щільна посадка, комфортне дихання, фільтрація 3 шари. Упаковка 50 шт.',
+    id:'mask', cat:'Маски', name:'Маска захисна чорна 3-шарова',
+    desc:'Тришарова захисна маска з мельтблауном, чорного кольору. Щільна посадка, комфортне дихання, фільтрація 3 шари. Упаковка 50 шт.',
     img:'img/maska2.png', packImg:'', pack:50,
     variants:[
-      {size:'50 шт/кор', tiers:[{min:1,price:120},{min:10,price:120},{min:100,price:110},{min:1000,price:110}]}
+      {size:'50 шт/уп', tiers:[{min:1,price:120},{min:10,price:110},{min:40,price:100}]}
     ]
   },
   {
-    id:'kraft', cat:'Стерилізація', name:'Крафт-пакети для стерилізації',
-    desc:'Крафтові пакети для стерилізації інструментів. Міцний папір, не розмокає, термостійкі до 134°C, індикатор стерилізації. Розмір 100×200 мм.',
+    id:'kraft', cat:'Стерилізація', name:'Пакет для стерилізації 100×200мм',
+    desc:'Білі пакети для стерилізації інструментів. Міцний папір, не розмокає, термостійкі до 134°C, індикатор стерилізації. Розмір 100×200 мм, 100 шт в упаковці.',
     img:'img/kraft_pak.png', packImg:'', pack:100,
     variants:[
-      {size:'100 шт', tiers:[{min:1,price:150},{min:10,price:140},{min:100,price:120},{min:1000,price:99}]}
+      {size:'100 шт', tiers:[{min:1,price:150},{min:10,price:140},{min:40,price:130}]}
     ]
   },
 ];
