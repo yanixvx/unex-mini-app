@@ -129,6 +129,8 @@ body.dark .saved { color:#4ade80; }
 .sizes-pick { display:flex; gap:8px; flex-wrap:wrap; }
 .size-pick { min-width:52px; padding:10px 14px; border-radius:12px; border:1.5px solid var(--line); background:var(--surface); color:var(--text); font-size:14px; font-weight:800; cursor:pointer; text-align:center; transition:all .15s; }
 .size-pick.active { border-color:var(--accent); background:var(--accent-soft); color:var(--accent-strong); }
+.size-pick.out { opacity:.5; cursor:not-allowed; text-decoration:line-through; background:var(--bg2); border-style:dashed; }
+.size-pick.out .pr { text-decoration:none; color:#c0392b; font-weight:700; }
 .size-pick .pr { display:block; font-size:10px; font-weight:600; color:var(--text3); margin-top:2px; }
 .size-pick.active .pr { color:var(--accent-strong); }
 .sheet .qty-line { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
@@ -425,7 +427,7 @@ const PRODUCTS = [
     img:'img/nitril22.png', packImg:'', pack:100,
     variants:[
       {size:'S',  tiers:[{min:1,price:220},{min:10,price:210},{min:40,price:200}]},
-      {size:'M',  tiers:[{min:1,price:220},{min:10,price:210},{min:40,price:200}]},
+      {size:'M',  out:true, tiers:[{min:1,price:220},{min:10,price:210},{min:40,price:200}]},
       {size:'L',  tiers:[{min:1,price:220},{min:10,price:210},{min:40,price:200}]},
       {size:'XL', tiers:[{min:1,price:220},{min:10,price:210},{min:40,price:200}]}
     ]
@@ -538,7 +540,7 @@ function renderCatalog() {
     const min = Math.min(...prices);
     const max = Math.max(...prices);
     const priceStr = min === max ? min + ' <small>грн</small>' : min + '–' + max + ' <small>грн</small>';
-    const sizesStr = p.variants.map(v => v.size.replace(/\([^)]*\)/,'').trim()).join(', ');
+    const sizesStr = p.variants.map(v => v.out ? '<s>' + v.size.replace(/\([^)]*\)/,'').trim() + '</s>' : v.size.replace(/\([^)]*\)/,'').trim()).join(', ');
     return `<div class="card" onclick="openSheet('${p.id}')">
       <div class="media">
         <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.style.visibility='hidden'">
@@ -565,7 +567,8 @@ function openSheet(id) {
   const p = PRODUCTS.find(x => x.id === id);
   if (!p) return;
   sheetProduct = p;
-  sheetSize = p.variants[0].size;
+  const firstAvail = p.variants.find(v => !v.out);
+  sheetSize = firstAvail ? firstAvail.size : p.variants[0].size;
   sheetQtyVal = 1;
   renderSheet();
   document.getElementById('sheet-overlay').classList.remove('hidden');
@@ -585,16 +588,22 @@ function renderSheet() {
   document.getElementById('sheet-title').textContent = p.name;
   document.getElementById('sheet-desc').innerHTML = p.desc + (p.pack ? `<br><br><b>В упаковці ${p.pack} шт.</b>` : '');
   document.getElementById('sheet-sizes').innerHTML = p.variants.map(v =>
-    `<div class="size-pick ${v.size === sheetSize ? 'active' : ''}" onclick="sheetPickSize('${v.size}')">${v.size}</div>`
+    v.out
+      ? `<div class="size-pick out">${v.size}<span class="pr">немає</span></div>`
+      : `<div class="size-pick ${v.size === sheetSize ? 'active' : ''}" onclick="sheetPickSize('${v.size}')">${v.size}</div>`
   ).join('');
   document.getElementById('sheet-qty').value = sheetQtyVal;
   updateSheetTotal();
 }
 function sheetPickSize(s) {
+  const pv = sheetProduct && sheetProduct.variants.find(v => v.size === s);
+  if (pv && pv.out) return;  // немає в наявності
   sheetSize = s;
   const p = sheetProduct;
   document.getElementById('sheet-sizes').innerHTML = p.variants.map(v =>
-    `<div class="size-pick ${v.size === sheetSize ? 'active' : ''}" onclick="sheetPickSize('${v.size}')">${v.size}</div>`
+    v.out
+      ? `<div class="size-pick out">${v.size}<span class="pr">немає</span></div>`
+      : `<div class="size-pick ${v.size === sheetSize ? 'active' : ''}" onclick="sheetPickSize('${v.size}')">${v.size}</div>`
   ).join('');
   updateSheetTotal();
 }
